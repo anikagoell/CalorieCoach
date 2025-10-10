@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Intake - CalorieCoach</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: url('waterbg.jpg') no-repeat center center/cover;
+        color: #333;
+        text-align: center;
+    }
+
+    header {
+        padding: 20px;
+        background-color: #211426;
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        border-bottom: 3px solid #63bfe6;
+    }
+
+    p.intro {
+        max-width: 600px;
+        margin: 15px auto;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #555;
+    }
+
+    /* Progress Circle */
+    .progress-wrapper {
+        display: flex;
+        justify-content: center;
+        margin: 25px 0;
+    }
+
+    .progress-circle {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: conic-gradient(#2b9ace 70%, #bfcaae 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .progress-circle span {
+        font-size: 26px;
+        font-weight: bold;
+        color: #5a8397;
+        position: absolute;
+    }
+
+    /* Graph Placeholder */
+    .graph {
+        margin: 25px auto;
+        width: 85%;
+        height: 150px;
+        background: #eaf8ff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #77c8f0;
+        font-size: 18px;
+        font-weight: bold;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Gallery */
+    h3 {
+        margin-top: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #444;
+    }
+
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .gallery-item {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.25s ease-in-out;
+        cursor: pointer;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.05);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+    }
+
+    .gallery-item p {
+        margin: 10px;
+        font-size: 14px;
+        color: #555;
+        font-weight: 500;
+    }
+
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 400px;
+        width: 90%;
+        text-align: left;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .modal-content h4 {
+        margin-top: 0;
+        color: #2b9ace;
+    }
+
+    .close {
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+        color: #888;
+    }
+
+    .close:hover {
+        color: red;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: scale(0.95);}
+        to {opacity: 1; transform: scale(1);}
+    }
+
+</style>
+</head>
+<body>
+
+<header>💧 Water Intake</header>
+
+<p class="intro">
+    Staying hydrated is essential for energy, digestion, and overall well-being.
+    Try these refreshing infused water ideas to keep your hydration goals on track!
+</p>
+
+<div class="progress-wrapper">
+    <div class="progress-circle">
+        <span>70%</span>
+    </div>
+</div>
+
+<h2>Today's Hydration</h2>
+<div class="graph">
+     Graph here..
+</div>
+
+<h2>Infused Water Suggestions</h2>
+<div class="gallery">
+    <div class="gallery-item" onclick="openModal('Cucumber & Mint', '• Cucumber slices<br>• Fresh mint leaves<br><br><b>Benefits:</b> Improves digestion, refreshes breath, and hydrates.')">
+        <img src="https://i.pinimg.com/736x/00/67/5c/00675c7b6c6c9381470377b28e22b142.jpg" alt="Cucumber Water">
+        <p>Cucumber & Mint</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Strawberry & Lemon', '• Fresh strawberries<br>• Lemon slices<br><br><b>Benefits:</b> Boosts vitamin C, improves skin health, and aids metabolism.')">
+        <img src="https://i.pinimg.com/736x/87/1f/6c/871f6cc21a496427a288fe8d7055eb91.jpg" alt="Strawberry Water">
+        <p>Strawberry & Lemon</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Mixed Citrus', '• Orange slices<br>• Lemon slices<br>• Grapefruit slices<br><br><b>Benefits:</b> Rich in antioxidants and vitamin C for immune support.')">
+        <img src="https://i.pinimg.com/736x/bc/fe/ff/bcfeff27d7e06680eb42e57072a94361.jpg" alt="Lemon Water">
+        <p>Mixed Citrus</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Blueberry', '• Fresh blueberries<br>• Lemon slices<br><br><b>Benefits:</b> High in antioxidants, supports heart health, and boosts brain function.')">
+        <img src="https://i.pinimg.com/736x/dd/d3/54/ddd3549e6c36bf160334b23f38348297.jpg" alt="Blueberry Water">
+        <p>Blueberry</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Chia Seeds & Lemon', '• Chia seeds<br>• Lemon juice<br><br><b>Benefits:</b> Improves digestion, provides omega-3 fatty acids, and boosts hydration.')">
+        <img src="https://i.pinimg.com/1200x/a6/91/f6/a691f6d4172779f191046a754638bea3.jpg" alt="Chia Seeds and Lemon">
+        <p>Chia Seeds & Lemon</p>
+    </div>
+        <div class="gallery-item" onclick="openModal('Orange & Basil', '• Fresh orange slices<br>• Basil leaves<br><br><b>Benefits:</b> Boosts immunity, reduces stress, and adds a refreshing twist.')">
+        <img src="https://i.pinimg.com/736x/1c/87/ac/1c87acce9f05da766184d48d408dc993.jpg" alt="Orange Basil Water">
+        <p>Orange & Basil</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Pineapple & Mint', '• Pineapple chunks<br>• Fresh mint leaves<br><br><b>Benefits:</b> Supports digestion, boosts vitamin C, and provides anti-inflammatory benefits.')">
+        <img src="https://i.pinimg.com/736x/80/77/1b/80771ba36d523c31704a5ef46b7ce0e6.jpg" alt="Pineapple Mint Water">
+        <p>Pineapple & Mint</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Apple & Cinnamon', '• Apple slices<br>• Cinnamon sticks<br><br><b>Benefits:</b> Regulates blood sugar, supports heart health, and aids metabolism.')">
+        <img src="https://i.pinimg.com/1200x/c3/69/a5/c369a5071298b143c4952ee5be707e09.jpg" alt="Apple Cinnamon Water">
+        <p>Apple & Cinnamon</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Watermelon & Rosemary', '• Watermelon cubes<br>• Fresh rosemary sprigs<br><br><b>Benefits:</b> Hydrates deeply, supports brain function, and improves digestion.')">
+        <img src="https://i.pinimg.com/1200x/1b/d2/3e/1bd23ed853a06d210d53a7b4bb173683.jpg" alt="Watermelon Rosemary Water">
+        <p>Watermelon & Rosemary</p>
+    </div>
+    <div class="gallery-item" onclick="openModal('Kiwi & Strawberry', '• Kiwi slices<br>• Fresh strawberries<br><br><b>Benefits:</b> Rich in antioxidants, boosts immunity, and improves skin health.')">
+        <img src="https://i.pinimg.com/736x/27/7b/08/277b082c61e7a85936a95012ac92562d.jpg" alt="Description" width="300">
+
+        <p>Kiwi & Strawberry</p>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="infoModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h4 id="modalTitle"></h4>
+        <p id="modalContent"></p>
+    </div>
+</div>
+
+<script>
+    function openModal(title, content) {
+        document.getElementById("modalTitle").innerHTML = title;
+        document.getElementById("modalContent").innerHTML = content;
+        document.getElementById("infoModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("infoModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById("infoModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>
