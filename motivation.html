@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalorieCoach - Recipes & Motivation</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin:0;
+        background: linear-gradient(135deg,#fdfbfb,#ebedee);
+    }
+    .header{
+        text-align:center;
+        padding:40px 20px 20px 20px;
+        background: linear-gradient(to right, #4CAF50, #81C784);
+        color:white;
+        border-bottom-left-radius:20px;
+        border-bottom-right-radius:20px;
+    }
+    .header h1{margin:0; font-size:2.5rem;}
+    .goal-cards{
+        display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:30px 20px;
+    }
+    .goal-card{
+        flex:1 1 200px; max-width:250px;
+        border-radius:15px;
+        padding:25px;
+        text-align:center;
+        font-weight:bold; font-size:18px; cursor:pointer;
+        color:white; transition: transform 0.3s;
+    }
+    .goal-card:hover{transform: translateY(-5px);}
+    .lose{background:#FF6B6B;}
+    .maintain{background:#FFD93D; color:#333;}
+    .gain{background:#4CAF50;}
+    .section{
+        max-width:900px; margin:auto; padding:30px 20px;
+    }
+    .section h2{text-align:center; font-size:2rem; margin-bottom:25px; color:#333;}
+    .recipe-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;}
+    .recipe-card{
+        background:#fff; border-radius:15px; padding:20px;
+        box-shadow:0 8px 20px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .recipe-card:hover{
+        transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.12);
+    }
+    .recipe-card h3{margin:0 0 10px 0; color:#4CAF50;}
+    .recipe-card p{margin:5px 0; font-size:14px; color:#555;}
+    .badge{display:inline-block; padding:4px 10px; border-radius:8px; font-size:12px; color:white; margin-right:5px;}
+    .morning{background:#FFA726;} .afternoon{background:#29B6F6;} .evening{background:#AB47BC;}
+    .btn{margin-top:10px; padding:10px 15px; border:none; border-radius:12px; background:#4CAF50; color:white; cursor:pointer; transition:0.3s;}
+    .btn:hover{background:#45a049;}
+    /* Modal */
+    .modal{
+        display:none; position:fixed; z-index:1000; left:0; top:0;
+        width:100%; height:100%; overflow:auto;
+        background:rgba(0,0,0,0.6);
+    }
+    .modal-content{
+        background:#fff; margin:10% auto; padding:20px; border-radius:15px;
+        max-width:600px; position:relative;
+    }
+    .close{
+        position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer; font-weight:bold;
+    }
+    @media(max-width:600px){.goal-cards{flex-direction:column; align-items:center;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1> Recipes Suggestions </h1>
+    <p>Choose your goal and get personalized recipes!</p>
+</div>
+
+<div class="goal-cards">
+    <div class="goal-card lose" onclick="showSection('lose')">Lose Weight</div>
+    <div class="goal-card maintain" onclick="showSection('maintain')">Maintain Weight</div>
+    <div class="goal-card gain" onclick="showSection('gain')">Gain Muscle</div>
+</div>
+
+<div class="section" id="loseSection">
+    <h2>Lose Weight Recipes</h2>
+    <div class="recipe-list" id="loseList"></div>
+</div>
+
+<div class="section" id="maintainSection">
+    <h2>Maintain Weight Recipes</h2>
+    <div class="recipe-list" id="maintainList"></div>
+</div>
+
+<div class="section" id="gainSection">
+    <h2>Gain Muscle Recipes</h2>
+    <div class="recipe-list" id="gainList"></div>
+</div>
+
+<!-- Modal for recipe details -->
+<div id="recipeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+const recipes = [
+    // --- Lose Weight 8 recipes ---
+    {goal:"lose", name:"Oatmeal with Berries", time:"10 mins", calories:250, protein:"8g", carbs:"40g", fats:"6g", meal:"Breakfast", bestTime:"morning", ingredients:["Oats 40g","Berries 50g","Milk 100ml"], process:["Cook oats with milk","Add berries","Serve"]},
+    {goal:"lose", name:"Grilled Veggie Salad", time:"15 mins", calories:200, protein:"6g", carbs:"25g", fats:"8g", meal:"Lunch", bestTime:"afternoon", ingredients:["Lettuce","Tomatoes","Cucumber","Olive Oil"], process:["Chop veggies","Grill lightly","Mix with olive oil"]},
+    {goal:"lose", name:"Zucchini Noodles", time:"20 mins", calories:180, protein:"5g", carbs:"15g", fats:"7g", meal:"Dinner", bestTime:"evening", ingredients:["Zucchini 2","Tomato Sauce 50ml","Parmesan 10g"], process:["Spiralize zucchini","Cook lightly","Add sauce & cheese"]},
+    {goal:"lose", name:"Fruit Smoothie", time:"5 mins", calories:150, protein:"3g", carbs:"30g", fats:"1g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Berries 50g","Water 100ml"], process:["Blend all ingredients","Serve chilled"]},
+    {goal:"lose", name:"Quinoa Salad", time:"20 mins", calories:220, protein:"7g", carbs:"35g", fats:"6g", meal:"Lunch", bestTime:"afternoon", ingredients:["Quinoa 50g","Veggies 100g"], process:["Cook quinoa","Mix with chopped veggies","Serve"]},
+    {goal:"lose", name:"Grilled Chicken Salad", time:"25 mins", calories:300, protein:"30g", carbs:"10g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Chicken 100g","Lettuce","Tomatoes"], process:["Grill chicken","Mix veggies","Serve"]},
+    {goal:"lose", name:"Protein Yogurt Bowl", time:"5 mins", calories:200, protein:"15g", carbs:"20g", fats:"4g", meal:"Breakfast", bestTime:"morning", ingredients:["Greek Yogurt 150g","Berries 50g","Honey 5g"], process:["Mix yogurt and berries","Add honey"]},
+    {goal:"lose", name:"Veggie Soup", time:"30 mins", calories:120, protein:"4g", carbs:"20g", fats:"2g", meal:"Dinner", bestTime:"evening", ingredients:["Carrots","Beans","Tomatoes","Spices"], process:["Boil veggies","Add spices","Serve hot"]},
+
+    // --- Maintain Weight 8 recipes ---
+    {goal:"maintain", name:"Salmon & Quinoa", time:"25 mins", calories:400, protein:"35g", carbs:"30g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Salmon 150g","Quinoa 50g","Veggies"], process:["Cook quinoa","Grill salmon","Mix with veggies"]},
+    {goal:"maintain", name:"Chicken Wrap", time:"15 mins", calories:350, protein:"25g", carbs:"35g", fats:"10g", meal:"Lunch", bestTime:"afternoon", ingredients:["Tortilla","Chicken 100g","Veggies"], process:["Cook chicken","Assemble wrap with veggies","Serve"]},
+    {goal:"maintain", name:"Avocado Toast", time:"10 mins", calories:250, protein:"6g", carbs:"30g", fats:"12g", meal:"Breakfast", bestTime:"morning", ingredients:["Bread 2 slices","Avocado 1","Salt & Pepper"], process:["Toast bread","Mash avocado","Spread on toast"]},
+    {goal:"maintain", name:"Greek Yogurt Parfait", time:"5 mins", calories:200, protein:"10g", carbs:"25g", fats:"5g", meal:"Snack", bestTime:"morning", ingredients:["Greek Yogurt 150g","Granola 30g","Berries"], process:["Layer yogurt, granola, berries","Serve chilled"]},
+    {goal:"maintain", name:"Veggie Stir Fry", time:"20 mins", calories:300, protein:"10g", carbs:"35g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Mixed Veggies","Soy Sauce","Olive Oil"], process:["Stir fry veggies with sauce","Serve"]},
+    {goal:"maintain", name:"Turkey Sandwich", time:"10 mins", calories:300, protein:"20g", carbs:"35g", fats:"8g", meal:"Lunch", bestTime:"afternoon", ingredients:["Bread 2 slices","Turkey 100g","Veggies"], process:["Assemble sandwich","Serve"]},
+    {goal:"maintain", name:"Banana Smoothie", time:"5 mins", calories:180, protein:"5g", carbs:"35g", fats:"3g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Milk 150ml","Honey 5g"], process:["Blend all","Serve"]},
+    {goal:"maintain", name:"Egg & Veggie Scramble", time:"15 mins", calories:250, protein:"12g", carbs:"15g", fats:"10g", meal:"Breakfast", bestTime:"morning", ingredients:["Eggs 2","Veggies 50g","Salt & Pepper"], process:["Scramble eggs with veggies","Serve"]},
+
+    // --- Gain Muscle 8 recipes ---
+    {goal:"gain", name:"Chicken Quinoa Bowl", time:"30 mins", calories:550, protein:"45g", carbs:"50g", fats:"15g", meal:"Lunch", bestTime:"afternoon", ingredients:["Chicken 150g","Quinoa 50g","Veggies"], process:["Cook quinoa","Grill chicken","Mix veggies"]},
+    {goal:"gain", name:"Peanut Butter Banana Smoothie", time:"5 mins", calories:300, protein:"12g", carbs:"35g", fats:"12g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Peanut Butter 2tbsp","Milk 150ml"], process:["Blend all ingredients","Serve chilled"]},
+    {goal:"gain", name:"Salmon Rice Bowl", time:"25 mins", calories:600, protein:"40g", carbs:"55g", fats:"18g", meal:"Dinner", bestTime:"evening", ingredients:["Salmon 150g","Rice 50g","Veggies"], process:["Cook rice","Grill salmon","Mix veggies"]},
+    {goal:"gain", name:"Egg Omelette", time:"10 mins", calories:300, protein:"20g", carbs:"5g", fats:"18g", meal:"Breakfast", bestTime:"morning", ingredients:["Eggs 3","Veggies 30g","Cheese 20g"], process:["Whisk eggs","Cook with veggies & cheese"]},
+    {goal:"gain", name:"Protein Pancakes", time:"15 mins", calories:350, protein:"20g", carbs:"40g", fats:"10g", meal:"Breakfast", bestTime:"morning", ingredients:["Oats 50g","Protein Powder 20g","Milk 100ml"], process:["Mix ingredients","Cook pancakes","Serve"]},
+    {goal:"gain", name:"Beef Stir Fry", time:"20 mins", calories:500, protein:"45g", carbs:"35g", fats:"18g", meal:"Dinner", bestTime:"evening", ingredients:["Beef 150g","Veggies 100g","Soy Sauce"], process:["Stir fry beef and veggies","Serve"]},
+    {goal:"gain", name:"Tuna Sandwich", time:"10 mins", calories:350, protein:"25g", carbs:"35g", fats:"10g", meal:"Lunch", bestTime:"afternoon", ingredients:["Bread 2 slices","Tuna 100g","Veggies"], process:["Assemble sandwich","Serve"]},
+    {goal:"gain", name:"Greek Yogurt with Nuts", time:"5 mins", calories:250, protein:"15g", carbs:"20g", fats:"12g", meal:"Snack", bestTime:"morning", ingredients:["Greek Yogurt 150g","Mixed Nuts 20g"], process:["Mix yogurt and nuts","Serve"]}
+];
+
+function showSection(goal){
+    document.getElementById('loseSection').style.display='none';
+    document.getElementById('maintainSection').style.display='none';
+    document.getElementById('gainSection').style.display='none';
+    if(goal==='lose') document.getElementById('loseSection').style.display='block';
+    else if(goal==='maintain') document.getElementById('maintainSection').style.display='block';
+    else if(goal==='gain') document.getElementById('gainSection').style.display='block';
+}
+
+function renderRecipes(){
+    const loseList=document.getElementById("loseList");
+    const maintainList=document.getElementById("maintainList");
+    const gainList=document.getElementById("gainList");
+    loseList.innerHTML=maintainList.innerHTML=gainList.innerHTML="";
+    recipes.forEach(r=>{
+        const card=document.createElement("div");
+        card.className="recipe-card";
+        card.innerHTML=`<h3>${r.name}</h3>
+        <p><strong>Meal:</strong> ${r.meal}</p>
+        <p><strong>Time to Prepare:</strong> ${r.time}</p>
+        <p><strong>Calories:</strong> ${r.calories} kcal</p>
+        <p><strong>Protein:</strong> ${r.protein}</p>
+        <p><strong>Carbs:</strong> ${r.carbs}</p>
+        <p><strong>Fats:</strong> ${r.fats}</p>
+        <span class="badge ${r.bestTime}">Best Time: ${r.bestTime.charAt(0).toUpperCase()+r.bestTime.slice(1)}</span>
+        <br><button class="btn" onclick='openModal(${JSON.stringify(r).replace(/'/g,"\\'")})'>Make It</button>`;
+        if(r.goal==="lose") loseList.appendChild(card);
+        else if(r.goal==="maintain") maintainList.appendChild(card);
+        else if(r.goal==="gain") gainList.appendChild(card);
+    });
+}
+
+function openModal(recipe){
+    const modal=document.getElementById("recipeModal");
+    const body=document.getElementById("modalBody");
+    body.innerHTML=`<h2>${recipe.name}</h2>
+    <p><strong>Meal:</strong> ${recipe.meal}</p>
+    <p><strong>Time to Prepare:</strong> ${recipe.time}</p>
+    <p><strong>Calories:</strong> ${recipe.calories} kcal</p>
+    <p><strong>Protein:</strong> ${recipe.protein}</p>
+    <p><strong>Carbs:</strong> ${recipe.carbs}</p>
+    <p><strong>Fats:</strong> ${recipe.fats}</p>
+    <h3>Ingredients:</h3>
+    <ul>${recipe.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
+    <h3>Process:</h3>
+    <ol>${recipe.process.map(p=>`<li>${p}</li>`).join('')}</ol>`;
+    modal.style.display="block";
+}
+
+function closeModal(){
+    document.getElementById("recipeModal").style.display="none";
+}
+
+// Initially hide all but lose section
+showSection('lose');
+renderRecipes();
+</script>
+</body>
+</html>
