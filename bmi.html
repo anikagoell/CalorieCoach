@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Calculator - CalorieCoach</title>
+<style>
+    body {
+        font-family: "Poppins", sans-serif;
+        background: url('bmi.jpg') no-repeat center center/cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: white;
+        width: 400px;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #2e3d55;
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    input[type="number"], input[type="range"] {
+        width: 80%;
+        margin: 8px 0;
+    }
+
+    button {
+        margin-top: 20px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background-color: #357bd8;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .bmi-bar {
+        display: flex;
+        height: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .bmi-bar div {
+        flex: 1;
+    }
+
+    .underweight { background-color: #87CEEB; }
+    .normal { background-color: #90EE90; }
+    .overweight { background-color: #FFD700; }
+    .obese { background-color: #FF6347; }
+
+    .category-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #555;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>BMI Calculator</h1>
+
+    <label for="weight">Weight (kg)</label>
+    <input type="number" id="weight" placeholder="Enter weight" min="1" max="300">
+
+    <label for="height">Height (cm)</label>
+    <input type="number" id="height" placeholder="Enter height" min="50" max="250">
+
+    <button onclick="calculateBMI()">Calculate</button>
+
+    <div id="result"></div>
+
+    <div class="bmi-bar">
+        <div class="underweight"></div>
+        <div class="normal"></div>
+        <div class="overweight"></div>
+        <div class="obese"></div>
+    </div>
+    <div class="category-labels">
+        <span>Underweight</span>
+        <span>Normal</span>
+        <span>Overweight</span>
+        <span>Obese</span>
+    </div>
+</div>
+
+<script>
+function calculateBMI() {
+    const weight = parseFloat(document.getElementById("weight").value);
+    const height = parseFloat(document.getElementById("height").value) / 100;
+
+    if (!weight || !height) {
+        document.getElementById("result").innerHTML = "⚠️ Please enter valid weight and height!";
+        return;
+    }
+
+    const bmi = (weight / (height * height)).toFixed(1);
+    let category = "";
+
+    if (bmi < 18.5) category = "Underweight 😕";
+    else if (bmi < 25) category = "Normal 😊";
+    else if (bmi < 30) category = "Overweight 😐";
+    else category = "Obese 😟";
+
+    document.getElementById("result").innerHTML = `Your BMI: <b>${bmi}</b> <br>Category: <b>${category}</b>`;
+}
+</script>
+
+</body>
+</html>
