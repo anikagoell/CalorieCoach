@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalorieCoach - Profile Setup</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('https://i.pinimg.com/736x/58/2d/c4/582dc4bcf7222205812391e8d7ce3cfd.jpg');
+            margin: 0;
+            background-blend-mode: color-burn ;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ceccdc;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .btn-group {
+            margin-top: 25px;
+            text-align: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .optional {
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Set Up Your Profile</h2>
+        <form action="/save_user" method="POST" enctype="multipart/form-data">
+            <label>Full Name</label>
+            <input type="text" name="full_name" placeholder="Your Name" required>
+
+            <label>Age</label>
+            <input type="number" name="age" min="1" max="120" required>
+
+            <label>Gender</label>
+            <select name="gender" required>
+                <option value="" disabled selected>Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+
+            <label>Email</label>
+            <input type="text" name="email" placeholder="your@email.com" required>
+
+            <label>Height (cm)</label>
+            <input type="number" name="height" min="50" max="250" required>
+
+            <label>Weight (kg)</label>
+            <input type="number" name="weight" min="20" max="300" required>
+
+            <label>Activity Level</label>
+            <select name="activity_level" required>
+                <option value="" disabled selected>Select</option>
+                <option>Sedentary</option>
+                <option>Lightly Active</option>
+                <option>Active</option>
+                <option>Very Active</option>
+            </select>
+
+            <label>Goal</label>
+            <select name="goal" required>
+                <option value="" disabled selected>Select</option>
+                <option>Lose Weight</option>
+                <option>Maintain Weight</option>
+                <option>Gain Muscle</option>
+            </select>
+
+            <label>Dietary Preference</label>
+            <select name="diet_pref">
+                <option value="" disabled selected>Select</option>
+                <option>Vegetarian</option>
+                <option>Vegan</option>
+                <option>Non-Veg</option>
+                <option>Eggetarian</option>
+                <option>Other</option>
+            </select>
+
+            <label class="optional">Medical Conditions (Optional)</label>
+            <textarea name="medical_conditions" rows="2" placeholder="e.g., Thyroid, Diabetes"></textarea>
+
+            <label class="optional">Allergies (Optional)</label>
+            <textarea name="allergies" rows="2" placeholder="e.g., Peanuts, Dairy"></textarea>
+
+            <label>Preferred Units</label>
+            <select name="units">
+                <option value="Metric" selected>Metric (kg/cm)</option>
+                <option>Imperial (lbs/in)</option>
+            </select>
+
+            <label class="optional">Profile Picture (Optional)</label>
+            <input type="file" name="profile_pic">
+
+            <label class="optional">Short Bio</label>
+            <textarea name="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+
+            <div class="btn-group">
+                <button type="submit">Save & Continue</button>
+                <button type="button" onclick="alert('You can fill it later!');">Skip for Now</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

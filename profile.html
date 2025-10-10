@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalorieCoach - Profile</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://i.pinimg.com/736x/10/b6/4f/10b64fed1364751f0a1be5330fc83cc8.jpg') no-repeat center center/cover; }
+
+        .container {
+            max-width: 750px;
+            margin: 50px auto;
+            background: #ffffffee;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4CAF50;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            row-gap: 15px;
+            column-gap: 20px;
+        }
+
+        .profile-info div {
+            padding: 10px 0;
+        }
+
+        .profile-info strong {
+            color: #555;
+        }
+
+        .bio {
+            grid-column: 1 / -1;
+            background: #f1faff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-style: italic;
+            color: #333;
+            margin-top: 15px;
+        }
+
+        .btn-logout {
+            display: block;
+            width: 160px;
+            margin: 40px auto 0 auto;
+            background: linear-gradient(135deg, #ff6b6b, #ff4d4d);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #ff4d4d, #e63939);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        @media(max-width: 600px){
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <img id="profilePic" class="profile-pic" src="https://via.placeholder.com/140" alt="Profile Picture">
+            <h2 id="fullNameDisplay"></h2>
+        </div>
+
+        <div class="profile-info">
+            <div><strong>Age:</strong></div> <div id="age"></div>
+            <div><strong>Gender:</strong></div> <div id="gender"></div>
+            <div><strong>Email:</strong></div> <div id="email"></div>
+            <div><strong>Height:</strong></div> <div id="height"></div>
+            <div><strong>Weight:</strong></div> <div id="weight"></div>
+            <div><strong>Activity Level:</strong></div> <div id="activity"></div>
+            <div><strong>Goal:</strong></div> <div id="goal"></div>
+            <div><strong>Diet Preference:</strong></div> <div id="diet"></div>
+            <div><strong>Medical Conditions:</strong></div> <div id="medical"></div>
+            <div><strong>Allergies:</strong></div> <div id="allergies"></div>
+            <div><strong>Preferred Units:</strong></div> <div id="units"></div>
+            <div class="bio"><strong>Bio:</strong> <span id="bio"></span></div>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        // Simulated user data (replace with real data later)
+        const userData = {
+            full_name: "Anika Goel",
+            age: 20,
+            gender: "Female",
+            email: "anika@example.com",
+            height: 156,
+            weight: 45,
+            activity_level: "Active",
+            goal: "Maintain Weight",
+            diet_pref: "Vegetarian",
+            medical_conditions: "",
+            allergies: "",
+            units: "Metric",
+            bio: "Health enthusiast learning to eat better.",
+            profile_pic: "" // add an image URL if available
+        };
+
+        // Display user data
+        document.getElementById("fullNameDisplay").innerText = userData.full_name;
+        document.getElementById("age").innerText = userData.age;
+        document.getElementById("gender").innerText = userData.gender;
+        document.getElementById("email").innerText = userData.email;
+        document.getElementById("height").innerText = userData.height + " cm";
+        document.getElementById("weight").innerText = userData.weight + " kg";
+        document.getElementById("activity").innerText = userData.activity_level;
+        document.getElementById("goal").innerText = userData.goal;
+        document.getElementById("diet").innerText = userData.diet_pref;
+        document.getElementById("medical").innerText = userData.medical_conditions || "None";
+        document.getElementById("allergies").innerText = userData.allergies || "None";
+        document.getElementById("units").innerText = userData.units;
+        document.getElementById("bio").innerText = userData.bio || "";
+
+        if(userData.profile_pic){
+            document.getElementById("profilePic").src = userData.profile_pic;
+        }
+
+        // Logout function
+        function logout(){
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
