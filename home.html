@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calorie Coach - Food Tracker</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        background: url('https://i.pinimg.com/736x/b9/c5/42/b9c542f1c0f34a13fd684fe3d842935c.jpg') no-repeat center center/cover;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .wrapper {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+        width: 220px;
+        background-color:  #0a2853;
+        color: rgb(248, 243, 243);
+        padding: 20px 0;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-top {
+        flex-grow: 1;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 24px;
+    }
+
+    .sidebar a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 12px 25px;
+        margin: 5px 0;
+        border-radius: 8px;
+        transition: background 0.9s;
+        font-weight: bold;
+    }
+
+    .sidebar a:hover {
+        background-color: #0056b3;
+    }
+
+    .logout-btn {
+        display: block;
+        padding: 12px 25px;
+        margin: 20px;
+        text-align: center;
+        background-color: #0a2853;
+        color: rgb(235, 228, 228);
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+        background-color: #dc2222;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+        flex: 1;
+        padding: 40px;
+        overflow-x: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #004080;
+        font-size: 32px;
+    }
+
+    /* ===== FOOD FORM ===== */
+    .food-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+        justify-content: center;
+    }
+
+    .food-form input, .food-form select, .food-form button {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
+
+    .food-form select {
+        width: 180px;
+        cursor: pointer;
+    }
+
+    .food-form input[type="text"], .food-form input[type="number"] {
+        width: 200px;
+    }
+
+    .food-form button {
+        background-color: #0056b3;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .food-form button:hover {
+        background-color: #003d80;
+    }
+
+    /* ===== TABLE ===== */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-size: 14px;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .totals {
+        margin-top: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: right;
+    }
+
+    /* ===== PREDICT BUTTON ===== */
+    .btn-submit {
+        margin-top: 20px;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn-submit:hover {
+        background-color: #0056b3;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width: 768px){
+        .wrapper {
+            flex-direction: column;
+        }
+        .sidebar {
+            width: 100%;
+        }
+        .food-form input, .food-form select {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <h2>Calorie Coach</h2>
+            <a href="profile.html">Profile</a>
+            <a href="bmi.html">Calculate BMI</a>
+            <a href="motivation.html">Recipe Suggestions</a>
+            <a href="water.html">Water Log</a>
+            <a href="report.html">Report</a>
+        </div>
+        <a href="login.html" class="logout-btn">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Food Intake & Calorie Prediction</h1>
+
+        <!-- Food Entry Form -->
+        <div class="food-form">
+            <input list="foodList" id="foodInput" placeholder="Type Dish Name">
+            <datalist id="foodList"></datalist>
+
+            <select id="mealTime">
+                <option value="">Select Meal</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+            </select>
+
+            <input type="number" id="quantity" placeholder="Quantity (servings)" min="1">
+            <button onclick="addFood()">Add</button>
+        </div>
+
+        <!-- Food Table -->
+        <table id="foodTable">
+            <thead>
+                <tr>
+                    <th>Dish</th>
+                    <th>Meal</th>
+                    <th>Quantity</th>
+                    <th>Calories (kcal)</th>
+                    <th>Carbs (g)</th>
+                    <th>Protein (g)</th>
+                    <th>Fat (g)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="totals" id="totals">
+            Total Calories: 0 kcal | Carbs: 0 g | Protein: 0 g | Fat: 0 g
+        </div>
+
+        <button class="btn-submit" onclick="predictCalories()">Predict Calories</button>
+    </div>
+</div>
+
+<script>
+    // ===== Step 1: Add all your dish names here =====
+    const allDishes = ["Hot tea (Garam Chai)", "Instant coffee", "Espreso coffee", "Iced tea", "Raw mango drink (Aam panna)", "Fruit Punch (with fresh juices)", "Fruit Punch (with squashes)", "Lemonade", "Lem-o-gin", "Cumin infused water (Jeere/Zeere ka pani)", "Coco pine cooler", "Summer cooler", "Hot cocoa", "Cold coffee with ice cream", "Banana milkshake (Kele milkshake)", "Mango milkshake (Aam milkshake)", "Pineapple milkshake (Ananas milkshake)", "Orange milkshake (Narangi milkshake)", "Egg nog", "Sweet Lassi (Meethi lassi)", "Lassi (salted)", "Cheese and chilli sandwich", "Egg sandwich (Ande ka sandwich)", "Cucumber sandwich (Kheere ka sandwich)", "Cheese and pineapple sandwich (Cheese aur ananas ka sandwich)", "Cheese and tomato sandwich (Cheese aur tamatar ke sandwich)", "Chicken sandwich", "Peanut and tomato sandwich (Moongfali aur tamatar ka sandwich)", "Rainbow sandwich", "Club sandwich", "Vegetarian club sandwich", "Pin wheel sandwich", "Carrot apple sandwich (Gajar aur seb ka sandwich)", "Salami sandwich", "Vegetable and mayonnaise sandwich", "Egg and tomato sandwich (Ande aur tamatar ka sandwich)", "Sweet open sandwich", "Mushroom and cheese sandwich (toasted)", "Cheese and tomato sandwich (toasted) (Cheese aur tamatar ke sandwich (toasted))", "Pea potato sandwich (toasted) (Matar aloo ka sandwich)", "Paneer pea sandwich (toasted) (Paneer matar ka sandwich)", "Chicken sandwich (toasted)", "Pea keema sandwich (toasted) (Matar aur keema ka sandwich)", "Classic club sandwich", "Sesame toast", "Cracked wheat porridge (Meetha daliya)", "Semolina porridge (Suji/Rava daliya)", "Oatmeal Porridge", "Cornflakes with milk", "Rice flakes (Chiwda/Aval)", "Wheat flakes", "Murmura (Puffed rice)", "Puffed wheat (Murmure/Moori)", "Boiled egg (Ubla anda)", "Fried Egg", "Poached egg", "Scrambled egg (Ande ki bhurji)", "Baked egg", "Plain omelette/omlet", "Stuffed egg omelette/omlet", "Pancake", "Keema pancake", "Vegetable pancake", "Jam and fruit pancake", "Khoa and coconut pancake", "Brown stock", "Vegetable stock", "Chicken stock", "Clear tomato soup (Tamatar ka soup)", "Lentil soup", "Chicken consomme (Clear chicken soup)", "Cream of tomato soup", "Cream of green peas soup", "Cream of spinach soup", "Cream of mixed vegetable soup", "Cream of mushroom soup", "Chicken sweet corn soup", "Minestrone soup", "Egg drop soup", "Chinese cabbage and meat ball soup", "French onion soup", "Hot and sour soup", "Talaumein soup", "Cold cucumber soup (Thanda kheere ka soup)", "Cold summer garden soup", "Chapati/Roti", "Plain parantha/paratha", "Potato parantha/paratha (Aloo ka parantha/paratha)", "Radish parantha/paratha (Mooli ka parantha/paratha)", "Cauliflower parantha/paratha (Phoolgobhi ka parantha/paratha)", "Dal parantha/paratha", "Sprouted moong parantha/paratha", "Pea parantha/paratha (Matar ka parantha/paratha)", "Keema parantha/paratha", "Paneer parantha/paratha", "Besan and spinach parantha/paratha (Besan aur palak ka parantha/paratha)", "Poori", "Spinach poori (Palak poori)", "Methi poori", "Dal stuffed poori", "Potato stuffed poori (Aloo ki poori)", "Tandoori parantha/paratha", "Boiled rice (Uble chawal)", "Plain pulao", "Mixed vegetable pulao", "Mushroom pulao", "Sprouted moong pulao", "Paneer pulao", "Peanut pulao", "Navratan pulao", "Green chickpeas pulao (Choliya pulao/Hare chane ka pulao)", "Mutton biryani/biriyani", "Vegetable biryani/biriyani", "Lemon rice (Pulihora, Elumichai sadam, Chitranna)", "Sweet rice (Meethe chawal)", "Curd rice (Dahi bhaat/Dahi chawal/ Perugu annam/Daddojanam/Thayir saadam)", "Tamarind rice (Chintapandu pulihora/Puliyodharai/Puli sadam/Huli anna)", "Spanish rice", "Chinese fried rice", "Macroni cheese pie", "Vegetable chowmein", "Chicken chowmein", "Cheese noodle ring", "Spaghetti and cheese balls in tomato sauce", "Penne platter", "Pasta hot pot", "Chicken lasagne", "Fettuccine with spinach sauce", "Naan", "Bhatura", "Idli", "Masala dosa", "Semolina dosa (Suji/Rava dosa)", "Onion tomato uttapam", "Paneer kaathi roll", "Makki ki roti", "Washed moong dal (Dhuli moong ki dal)", "Washed urad dal (Dhuli urad ki dal)", "Split bengal gram with bottle gourd (Channa dal with ghiya/lauki)", "Dry washed urad", "Mixed dal", "Whole moong (Moong ki dal)", "Whole masoor (Masoor ki dal)", "Whole moth (Moth ki dal)", "Whole urad (Urad ki dal)", "Moti mahal dal (Urad rajmah mix dal)", "Black channa curry/Bengal gram curry (Kale chane ki curry)", "Chickpeas curry (Safed channa curry)", "Lobia curry", "Soyabean curry", "Kidney bean curry (Rajmah curry)", "Sambar", "Besan kadhi with pakodies", "Khatta channa", "Sprouted moong dal chat", "Potato cauliflower (Aloo gobhi)", "Potato capsicum (Shimla mirch aloo)", "Cabbage and peas (Pattagobhi aur matar)", "Carrot and fenugreek leaves (Gajar methi)", "Potato fenugreek (Aloo methi)", "Brinjal bhartha (Baingan ka bhartha)", "Dry potato (Sookhe aloo)", "Beans with coconut (Nariyal aur sem/phali; Beans thoran)", "Cauliflower with coconut (Nariyal ke saath phoolgobhi)", "Carrot and cabbage with coconut (Nariyal ke saath pattagobhi aur gajar)", "Raw turnip with coconut", "Raw papaya with coconut (Papaya thoran)", "Stuffed okra (Bharwa bhindi)", "Stuffed round gourd (Bharwa tinde)", "Stuffed capsicum (Bharwa shimla mirch)", "Stuffed brinjal (Bharwa baingan)", "Stuffed tomatoes (Bharwa tamatar)", "Pea potato curry (Aloo matar)", "Pea paneer curry (Matar paneer)", "Pea mushroom curry (Matar mushroom)", "Pea curry (Matar ki sabzi)", "Pea vadi curry", "Paneer curry", "Lotus stem curry (Kamal kakdi curry)", "Gravy for kofta", "Pea kofta curry (Matar kofta curry)", "Spinach kofta curry (Palak kofta curry)", "Paneer kofta curry", "Lotus stem kofta curry (Kamal kakdi kofta curry)", "Raw banana kofta curry (Kela kofta curry)", "Cauliflower kofta curry (Phoolgobhi kofta curry)", "Cabbage kofta curry (Pattagobhi kofta curry)", "Ghiya/Lauki Kofta Curry", "Spinach paneer kofta curry (Palak paneer kofta curry)", "Vegetarian egg kofta curry", "Baked vegetables", "Cauliflower musallam (Phoolgobhi musallam)", "Baked vegetables with spinach", "Baked potato with skin", "Shepherd's pie (vegetarian)", "Baked brinjal in tomato sauce", "Dum aloo", "Spinach paneer (Palak paneer)", "Methi chaman", "Sarson ka saag", "Jackfruit sabzi (Kathal ki sabzi)", "Avial", "Al yakhani", "Shahi paneer", "Paneer in butter sauce", "Methi malai paneer", "Chilli paneer", "Paneer makhana korma", "Kadhai Paneer", "Roghan josh", "Spinach mutton (Palak mutton)", "Pea keema curry (Matar keema ki sabzi)", "Keema kofta curry", "Kashmiri mutton koftas (Gushtaba)", "Mutton yakhni", "Chicken yakhni", "Mutton do piaza", "Mutton chops", "Shammi kebab", "Scotch egg", "Shepherd's pie (with minced meat)", "Chicken curry", "Tandoori chicken", "Butter chicken", "Chicken kebab", "Chilli chicken", "Fried chicken with tomato sauce (Fried chicken tamatar ki chutney kay saath)", "Fish curry (Machli curry)", "Fried fish (Indian style) (Tali hui machli)", "Fried fish and Chips (English Style) (Tali hui machli aur chips)", "Tomato fish", "Baked fish with cheese sauce", "Fish tikka", "Tandoori fish", "Paneer, apple and pineapple salad", "Russian salad", "Pasta salad", "Deviled egg", "Hawain salad", "Mixed pulse and vegetable salad", "Sprouted moong salad", "Tossed salad", "Mixed vegetable salad with curd sauce", "Potato salad (Aloo ka salaad)", "Waldroff salad", "Coleslaw", "Boiled vegetables with butter", "Boiled vegetables with olive oil", "Boiled vegetables with cheese sauce", "Boiled vegetables with tomato sauce", "Boiled vegetables with spinach sauce", "Steamed mixed vegetables", "Stir-fried vegetables with soy sauce", "Hot tea (Garam Chai)", "Instant coffee", "Espreso coffee", "Iced tea", "Raw mango drink (Aam panna)", "Fruit Punch (with fresh juices)", "Fruit Punch (with squashes)", "Lemonade", "Lem-o-gin", "Cumin infused water (Jeere/Zeere ka pani)", "Coco pine cooler", "Summer cooler", "Hot cocoa", "Cold coffee with ice cream", "Banana milkshake (Kele milkshake)"];
+
+
+    // ===== Step 2: Populate the datalist dynamically =====
+    const datalist = document.getElementById('foodList');
+    allDishes.forEach(dish => {
+        const option = document.createElement('option');
+        option.value = dish;
+        datalist.appendChild(option);
+    });
+
+    // ===== Existing code =====
+    let addedFoods = [];
+
+    function addFood() {
+        const dish = document.getElementById('foodInput').value;
+        const meal = document.getElementById('mealTime').value;
+        const qty = parseFloat(document.getElementById('quantity').value);
+
+        if(!dish || !meal || !qty){
+            alert("Please fill Dish Name, Meal, and Quantity!");
+            return;
+        }
+
+        // Add item with placeholder nutrients (to be updated by ML backend)
+        addedFoods.push({
+            name: dish,
+            meal: meal,
+            qty: qty,
+            cal: 0,
+            carb: 0,
+            protein: 0,
+            fat: 0
+        });
+
+        updateTable();
+
+        // Clear input
+        document.getElementById('foodInput').value = '';
+        document.getElementById('mealTime').value = '';
+        document.getElementById('quantity').value = '';
+    }
+
+    function updateTable() {
+        const tbody = document.querySelector('#foodTable tbody');
+        tbody.innerHTML = "";
+        let totalCal = 0, totalCarb = 0, totalProtein = 0, totalFat = 0;
+
+        addedFoods.forEach(item => {
+            tbody.innerHTML += `<tr>
+                <td>${item.name}</td>
+                <td>${item.meal}</td>
+                <td>${item.qty}</td>
+                <td>${item.cal.toFixed(2)}</td>
+                <td>${item.carb.toFixed(2)}</td>
+                <td>${item.protein.toFixed(2)}</td>
+                <td>${item.fat.toFixed(2)}</td>
+            </tr>`;
+            totalCal += item.cal;
+            totalCarb += item.carb;
+            totalProtein += item.protein;
+            totalFat += item.fat;
+        });
+
+        document.getElementById('totals').innerText = 
+            `Total Calories: ${totalCal.toFixed(2)} kcal | Carbs: ${totalCarb.toFixed(2)} g | Protein: ${totalProtein.toFixed(2)} g | Fat: ${totalFat.toFixed(2)} g`;
+    }
+
+    function predictCalories() {
+        if(addedFoods.length === 0){
+            alert("Add some foods first!");
+            return;
+        }
+        alert("This will call the ML backend to predict nutrients for each dish!");
+    }
+</script>
+</body>
+</html>

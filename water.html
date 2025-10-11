@@ -16,7 +16,7 @@
 
     header {
         padding: 20px;
-        background-color: #211426;
+        background-color: #110558;
         color: white;
         font-size: 28px;
         font-weight: bold;
@@ -32,6 +32,31 @@
         color: #555;
     }
 
+    /* Input Section */
+    .input-section {
+        margin: 20px 0;
+    }
+    .input-section input {
+        padding:8px; 
+        width:150px; 
+        font-size:16px;
+        border-radius:5px;
+        border:1px solid #ccc;
+    }
+    .input-section button {
+        padding:8px 15px; 
+        font-size:16px; 
+        cursor:pointer; 
+        background:#2b9ace; 
+        color:white; 
+        border:none; 
+        border-radius:5px;
+        margin-left:5px;
+    }
+    .input-section button:hover {
+        background:#1a7ba0;
+    }
+
     /* Progress Circle */
     .progress-wrapper {
         display: flex;
@@ -43,12 +68,13 @@
         width: 160px;
         height: 160px;
         border-radius: 50%;
-        background: conic-gradient(#2b9ace 70%, #bfcaae 0);
+        background: conic-gradient(#2b9ace 0%, #bfcaae 0);
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         position: relative;
+        transition: background 0.5s ease;
     }
 
     .progress-circle span {
@@ -66,12 +92,32 @@
         background: #eaf8ff;
         border-radius: 12px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-end;
+        justify-content: space-around;
         color: #77c8f0;
         font-size: 18px;
         font-weight: bold;
         box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+        padding-bottom: 5px;
+    }
+
+    .graph div {
+        width: 10%;
+        background:#2b9ace;
+        display:flex;
+        align-items:flex-end;
+        justify-content:center;
+        border-radius:5px 5px 0 0;
+        transition: height 0.5s ease;
+        position: relative;
+    }
+
+    .graph span {
+        position: absolute;
+        top: -20px;
+        font-size:12px;
+        text-align:center;
+        width:100%;
     }
 
     /* Gallery */
@@ -170,15 +216,21 @@
     Try these refreshing infused water ideas to keep your hydration goals on track!
 </p>
 
+<!-- Input Section -->
+<div class="input-section">
+    <input type="number" id="waterInput" placeholder="Add water in ml">
+    <button onclick="addWater()">Add</button>
+</div>
+
 <div class="progress-wrapper">
     <div class="progress-circle">
-        <span>70%</span>
+        <span>0%</span>
     </div>
 </div>
 
 <h2>Today's Hydration</h2>
 <div class="graph">
-     Graph here..
+     <!-- Bars generated dynamically -->
 </div>
 
 <h2>Infused Water Suggestions</h2>
@@ -237,22 +289,84 @@
 </div>
 
 <script>
-    function openModal(title, content) {
-        document.getElementById("modalTitle").innerHTML = title;
-        document.getElementById("modalContent").innerHTML = content;
-        document.getElementById("infoModal").style.display = "flex";
-    }
+const dailyGoal = 2000; // daily goal in ml
+const progressCircle = document.querySelector(".progress-circle span");
 
-    function closeModal() {
-        document.getElementById("infoModal").style.display = "none";
-    }
+// Load water data from localStorage
+function loadWaterData() {
+    let waterData = JSON.parse(localStorage.getItem('waterData') || '{}');
+    const today = new Date().toISOString().split('T')[0];
 
-    window.onclick = function(event) {
-        let modal = document.getElementById("infoModal");
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
+    if (!waterData[today]) waterData[today] = 0;
+
+    updateProgress(waterData[today]);
+    updateGraph(waterData);
+}
+
+// Add water intake
+function addWater() {
+    let input = document.getElementById("waterInput");
+    let amount = parseInt(input.value);
+    if (!amount || amount <= 0) return alert("Enter a valid amount");
+
+    let waterData = JSON.parse(localStorage.getItem('waterData') || '{}');
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!waterData[today]) waterData[today] = 0;
+    waterData[today] += amount;
+
+    localStorage.setItem('waterData', JSON.stringify(waterData));
+
+    input.value = '';
+    updateProgress(waterData[today]);
+    updateGraph(waterData);
+}
+
+// Update progress circle
+function updateProgress(amount) {
+    const percentage = Math.min((amount / dailyGoal) * 100, 100);
+    progressCircle.textContent = `${Math.round(percentage)}%`;
+    document.querySelector(".progress-circle").style.background = `conic-gradient(#2b9ace ${percentage}%, #bfcaae 0)`;
+}
+
+// Update graph
+function updateGraph(data) {
+    let graph = document.querySelector(".graph");
+    graph.innerHTML = '';
+    let keys = Object.keys(data).slice(-7); // last 7 days
+    keys.forEach(day => {
+        let bar = document.createElement('div');
+        let barHeight = Math.min((data[day]/dailyGoal)*100, 100);
+        bar.style.height = barHeight + '%';
+
+        let label = document.createElement('span');
+        label.textContent = data[day] + 'ml';
+        bar.appendChild(label);
+
+        graph.appendChild(bar);
+    });
+}
+
+// Modal functions
+function openModal(title, content) {
+    document.getElementById("modalTitle").innerHTML = title;
+    document.getElementById("modalContent").innerHTML = content;
+    document.getElementById("infoModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("infoModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById("infoModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
     }
+}
+
+window.onload = loadWaterData;
 </script>
+
 </body>
 </html>

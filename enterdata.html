@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calorie Prediction</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('your-background-image.jpg'); /* Add your image path */
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+    .container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    h1 {
+        text-align: center;
+        color: #444;
+        margin-bottom: 30px;
+    }
+    .food-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .food-form input {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        flex: 1;
+    }
+    .food-form button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+    }
+    .food-form button:hover {
+        background-color: #218838;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    table, th, td {
+        border: 1px solid #aaa;
+    }
+    th, td {
+        padding: 12px;
+        text-align: center;
+    }
+    th {
+        background-color: #f8f8f8;
+    }
+    .totals {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: right;
+    }
+    .btn-submit {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+    .btn-submit:hover {
+        background-color: #0069d9;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Food Intake & Calorie Prediction</h1>
+
+    <!-- Food Input Form -->
+    <div class="food-form">
+        <input list="foodList" id="foodInput" placeholder="Type Dish Name">
+        <datalist id="foodList">
+            <!-- Example food items, you can generate all 800+ dynamically in JS -->
+            <option value="Hot tea (Garam Chai)">
+            <option value="Instant coffee">
+            <option value="Espreso coffee">
+            <option value="Iced tea">
+            <option value="Raw mango drink (Aam panna)">
+        </datalist>
+        <input type="number" id="quantity" placeholder="Quantity (cups/servings)" min="1">
+        <button onclick="addFood()">Add Food</button>
+    </div>
+
+    <!-- Food Table -->
+    <table id="foodTable">
+        <thead>
+            <tr>
+                <th>Dish Name</th>
+                <th>Quantity</th>
+                <th>Calories (kcal)</th>
+                <th>Carbs (g)</th>
+                <th>Protein (g)</th>
+                <th>Fat (g)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Total Calories -->
+    <div class="totals" id="totals">
+        Total Calories: 0 kcal | Carbs: 0 g | Protein: 0 g | Fat: 0 g
+    </div>
+
+    <button class="btn-submit" onclick="predictCalories()">Predict Calories</button>
+</div>
+
+<script>
+    // ===== Example food dataset (replace with all 800+ items later) =====
+    const foodData = {
+        "Hot tea (Garam Chai)": {cal: 16.14, carb: 2.58, protein: 0.39, fat: 0.53},
+        "Instant coffee": {cal: 23.16, carb: 3.65, protein: 0.64, fat: 0.75},
+        "Espreso coffee": {cal: 51.54, carb: 6.62, protein: 1.75, fat: 2.14},
+        "Iced tea": {cal: 10.34, carb: 2.7, protein: 0.03, fat: 0.01},
+        "Raw mango drink (Aam panna)": {cal: 35.92, carb: 9.05, protein: 0.16, fat: 0.03}
+    };
+
+    let addedFoods = [];
+
+    function addFood() {
+        const food = document.getElementById('foodInput').value;
+        const qty = parseFloat(document.getElementById('quantity').value);
+
+        if (!food || !qty) {
+            alert("Please enter a dish name and quantity.");
+            return;
+        }
+
+        if (!foodData[food]) {
+            alert("Dish not found in dataset!");
+            return;
+        }
+
+        const nutrients = foodData[food];
+        const foodEntry = {
+            name: food,
+            qty: qty,
+            cal: nutrients.cal * qty,
+            carb: nutrients.carb * qty,
+            protein: nutrients.protein * qty,
+            fat: nutrients.fat * qty
+        };
+
+        addedFoods.push(foodEntry);
+        updateTable();
+
+        // Clear inputs
+        document.getElementById('foodInput').value = '';
+        document.getElementById('quantity').value = '';
+    }
+
+    function updateTable() {
+        const tbody = document.querySelector('#foodTable tbody');
+        tbody.innerHTML = "";
+        let totalCal = 0, totalCarb = 0, totalProtein = 0, totalFat = 0;
+
+        addedFoods.forEach(item => {
+            const row = `<tr>
+                            <td>${item.name}</td>
+                            <td>${item.qty}</td>
+                            <td>${item.cal.toFixed(2)}</td>
+                            <td>${item.carb.toFixed(2)}</td>
+                            <td>${item.protein.toFixed(2)}</td>
+                            <td>${item.fat.toFixed(2)}</td>
+                         </tr>`;
+            tbody.innerHTML += row;
+
+            totalCal += item.cal;
+            totalCarb += item.carb;
+            totalProtein += item.protein;
+            totalFat += item.fat;
+        });
+
+        document.getElementById('totals').innerText = 
+            `Total Calories: ${totalCal.toFixed(2)} kcal | Carbs: ${totalCarb.toFixed(2)} g | Protein: ${totalProtein.toFixed(2)} g | Fat: ${totalFat.toFixed(2)} g`;
+    }
+
+    function predictCalories() {
+        if (addedFoods.length === 0) {
+            alert("Add some food items first.");
+            return;
+        }
+        alert("Calories predicted successfully! Connect this to your ML model backend.");
+    }
+</script>
+</body>
+</html>
