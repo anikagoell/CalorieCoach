@@ -1,198 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>CalorieCoach - Recipes & Motivation</title>
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    :root{
+        --green:#4CAF50;
+        --soft:#fdfbfb;
+        --card-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    body{
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin:0;
-        background: linear-gradient(135deg,#fdfbfb,#ebedee);
+        background: linear-gradient(135deg,var(--soft),#ebedee);
+        color:#222;
+        scroll-behavior: smooth;
     }
     .header{
         text-align:center;
-        padding:40px 20px 20px 20px;
-        background: linear-gradient(to right, #4CAF50, #81C784);
+        padding:36px 18px 16px;
+        background: linear-gradient(90deg,#4CAF50,#81C784);
         color:white;
-        border-bottom-left-radius:20px;
-        border-bottom-right-radius:20px;
+        border-bottom-left-radius:18px;
+        border-bottom-right-radius:18px;
     }
-    .header h1{margin:0; font-size:2.5rem;}
+    .header h1{margin:0;font-size:2.1rem}
+    .header p{margin:8px 0 0 0;opacity:0.95}
+
     .goal-cards{
-        display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:30px 20px;
+        display:flex;
+        justify-content:center;
+        gap:18px;
+        flex-wrap:wrap;
+        margin:24px 20px;
     }
     .goal-card{
-        flex:1 1 200px; max-width:250px;
-        border-radius:15px;
-        padding:25px;
+        flex:1 1 200px;
+        max-width:260px;
+        border-radius:14px;
+        padding:18px;
         text-align:center;
-        font-weight:bold; font-size:18px; cursor:pointer;
-        color:white; transition: transform 0.3s;
+        font-weight:700;
+        font-size:16px;
+        cursor:pointer;
+        color:white;
+        transition:transform .22s, box-shadow .22s;
+        box-shadow: var(--card-shadow);
+        user-select:none;
     }
-    .goal-card:hover{transform: translateY(-5px);}
-    .lose{background:#FF6B6B;}
-    .maintain{background:#FFD93D; color:#333;}
-    .gain{background:#4CAF50;}
+    .goal-card:hover{transform:translateY(-6px)}
+    .lose{background:linear-gradient(90deg,#FF6B6B,#FF8A80)}
+    .maintain{background:linear-gradient(90deg,#FFD54F,#FFE082); color:#222}
+    .gain{background:linear-gradient(90deg,#66BB6A,#4CAF50)}
+
     .section{
-        max-width:900px; margin:auto; padding:30px 20px;
+        max-width:1000px;
+        margin:28px auto;
+        padding:20px;
     }
-    .section h2{text-align:center; font-size:2rem; margin-bottom:25px; color:#333;}
-    .recipe-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;}
+    .section h2{text-align:center;font-size:1.8rem;margin:4px 0 18px;color:#333}
+
+    .subgroup{
+        margin:14px 6px 28px;
+    }
+    .subgroup h3{
+        margin:8px 0 12px;
+        font-size:1.1rem;
+        color:#333;
+    }
+
+    .recipe-list{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        gap:18px;
+    }
     .recipe-card{
-        background:#fff; border-radius:15px; padding:20px;
-        box-shadow:0 8px 20px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s;
+        background:#fff;
+        border-radius:14px;
+        padding:16px;
+        box-shadow:var(--card-shadow);
+        transition:transform .18s, box-shadow .18s;
     }
-    .recipe-card:hover{
-        transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.12);
+    .recipe-card:hover{transform:translateY(-6px); box-shadow:0 14px 30px rgba(0,0,0,0.12)}
+    .recipe-card h4{margin:0 0 8px 0;color:var(--green)}
+    .meta{font-size:13px;color:#555;margin:6px 0}
+    .badges{margin-top:8px}
+    .badge{
+        display:inline-block;
+        padding:6px 8px;
+        border-radius:999px;
+        font-size:12px;
+        font-weight:700;
+        margin-right:8px;
+        vertical-align:middle;
     }
-    .recipe-card h3{margin:0 0 10px 0; color:#4CAF50;}
-    .recipe-card p{margin:5px 0; font-size:14px; color:#555;}
-    .badge{display:inline-block; padding:4px 10px; border-radius:8px; font-size:12px; color:white; margin-right:5px;}
-    .morning{background:#FFA726;} .afternoon{background:#29B6F6;} .evening{background:#AB47BC;}
-    .btn{margin-top:10px; padding:10px 15px; border:none; border-radius:12px; background:#4CAF50; color:white; cursor:pointer; transition:0.3s;}
-    .btn:hover{background:#45a049;}
+    .veg{background:#e8f5e9;color:#2e7d32;border:1px solid rgba(46,125,50,0.06)}
+    .nonveg{background:#ffebee;color:#c62828;border:1px solid rgba(198,40,40,0.06)}
+    .time-badge{background:#eef7ff;color:#0277bd;border:1px solid rgba(2,119,189,0.08)}
+    .btn{margin-top:12px;padding:10px 14px;border:none;border-radius:10px;background:var(--green);color:#fff;cursor:pointer;font-weight:700}
+    .btn:hover{background:#3e8e3e}
+
     /* Modal */
     .modal{
-        display:none; position:fixed; z-index:1000; left:0; top:0;
-        width:100%; height:100%; overflow:auto;
-        background:rgba(0,0,0,0.6);
+        display:none;
+        position:fixed; z-index:1200;
+        left:0; top:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,0.55);
+        align-items:center; justify-content:center;
+        padding:20px;
     }
-    .modal-content{
-        background:#fff; margin:10% auto; padding:20px; border-radius:15px;
-        max-width:600px; position:relative;
+    .modal.show{display:flex}
+    .modal-card{
+        width:100%;
+        max-width:720px;
+        background:#fff;
+        border-radius:14px;
+        padding:20px; box-shadow:0 20px 50px rgba(0,0,0,0.2);
+        max-height:86vh; overflow:auto;
     }
-    .close{
-        position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer; font-weight:bold;
+    .modal-close{position:absolute;right:26px;top:18px;font-size:22px;cursor:pointer;color:#fff}
+    .modal-card h2{margin:0 0 8px}
+    .modal-section{margin-top:12px}
+    .ingredients li, .process li{margin:8px 0;font-size:14px;color:#333}
+    .label-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+    @media(max-width:640px){
+        .header h1{font-size:1.6rem}
+        .goal-card{max-width:100%}
     }
-    @media(max-width:600px){.goal-cards{flex-direction:column; align-items:center;}}
 </style>
 </head>
 <body>
 
 <div class="header">
-    <h1> Recipes Suggestions </h1>
-    <p>Choose your goal and get personalized recipes!</p>
+    <h1>CalorieCoach — Recipes & Motivation</h1>
+    <p>Choose your goal and find curated Indian + global recipes with nutrients, meal time and easy processes.</p>
 </div>
 
-<div class="goal-cards">
+<div class="goal-cards" aria-hidden="false">
     <div class="goal-card lose" onclick="showSection('lose')">Lose Weight</div>
     <div class="goal-card maintain" onclick="showSection('maintain')">Maintain Weight</div>
     <div class="goal-card gain" onclick="showSection('gain')">Gain Muscle</div>
 </div>
 
+<!-- LOSE -->
 <div class="section" id="loseSection">
-    <h2>Lose Weight Recipes</h2>
-    <div class="recipe-list" id="loseList"></div>
+    <h2>Lose Weight — Recipes</h2>
+
+    <div class="subgroup" id="lose-veg">
+        <h3>Veg Options</h3>
+        <div class="recipe-list" id="loseVegList"></div>
+    </div>
+
+    <div class="subgroup" id="lose-nonveg">
+        <h3>Non-Veg Options</h3>
+        <div class="recipe-list" id="loseNonvegList"></div>
+    </div>
 </div>
 
-<div class="section" id="maintainSection">
-    <h2>Maintain Weight Recipes</h2>
-    <div class="recipe-list" id="maintainList"></div>
+<!-- MAINTAIN -->
+<div class="section" id="maintainSection" style="display:none">
+    <h2>Maintain Weight — Recipes</h2>
+
+    <div class="subgroup" id="maintain-veg">
+        <h3>Veg Options</h3>
+        <div class="recipe-list" id="maintainVegList"></div>
+    </div>
+
+    <div class="subgroup" id="maintain-nonveg">
+        <h3>Non-Veg Options</h3>
+        <div class="recipe-list" id="maintainNonvegList"></div>
+    </div>
 </div>
 
-<div class="section" id="gainSection">
-    <h2>Gain Muscle Recipes</h2>
-    <div class="recipe-list" id="gainList"></div>
+<!-- GAIN -->
+<div class="section" id="gainSection" style="display:none">
+    <h2>Gain Muscle — Recipes</h2>
+
+    <div class="subgroup" id="gain-veg">
+        <h3>Veg Options</h3>
+        <div class="recipe-list" id="gainVegList"></div>
+    </div>
+
+    <div class="subgroup" id="gain-nonveg">
+        <h3>Non-Veg Options</h3>
+        <div class="recipe-list" id="gainNonvegList"></div>
+    </div>
 </div>
 
-<!-- Modal for recipe details -->
-<div id="recipeModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <div id="modalBody"></div>
+<!-- Modal -->
+<div id="recipeModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <h2 id="modalTitle"></h2>
+                <div id="modalSubtitle" style="color:#555;font-size:14px;margin-top:4px"></div>
+            </div>
+            <div style="text-align:right">
+                <div class="modal-close" onclick="closeModal()">✕</div>
+            </div>
+        </div>
+
+        <div class="modal-section" id="modalNutrition"></div>
+        <div class="modal-section" id="modalIngredients"></div>
+        <div class="modal-section" id="modalProcess"></div>
     </div>
 </div>
 
 <script>
+/* Recipe data: 12 per goal, each has: goal, name, type, meal, time, calories, protein, carbs, fats, bestTime, ingredients[], process[] */
 const recipes = [
-    // --- Lose Weight 8 recipes ---
-    {goal:"lose", name:"Oatmeal with Berries", time:"10 mins", calories:250, protein:"8g", carbs:"40g", fats:"6g", meal:"Breakfast", bestTime:"morning", ingredients:["Oats 40g","Berries 50g","Milk 100ml"], process:["Cook oats with milk","Add berries","Serve"]},
-    {goal:"lose", name:"Grilled Veggie Salad", time:"15 mins", calories:200, protein:"6g", carbs:"25g", fats:"8g", meal:"Lunch", bestTime:"afternoon", ingredients:["Lettuce","Tomatoes","Cucumber","Olive Oil"], process:["Chop veggies","Grill lightly","Mix with olive oil"]},
-    {goal:"lose", name:"Zucchini Noodles", time:"20 mins", calories:180, protein:"5g", carbs:"15g", fats:"7g", meal:"Dinner", bestTime:"evening", ingredients:["Zucchini 2","Tomato Sauce 50ml","Parmesan 10g"], process:["Spiralize zucchini","Cook lightly","Add sauce & cheese"]},
-    {goal:"lose", name:"Fruit Smoothie", time:"5 mins", calories:150, protein:"3g", carbs:"30g", fats:"1g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Berries 50g","Water 100ml"], process:["Blend all ingredients","Serve chilled"]},
-    {goal:"lose", name:"Quinoa Salad", time:"20 mins", calories:220, protein:"7g", carbs:"35g", fats:"6g", meal:"Lunch", bestTime:"afternoon", ingredients:["Quinoa 50g","Veggies 100g"], process:["Cook quinoa","Mix with chopped veggies","Serve"]},
-    {goal:"lose", name:"Grilled Chicken Salad", time:"25 mins", calories:300, protein:"30g", carbs:"10g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Chicken 100g","Lettuce","Tomatoes"], process:["Grill chicken","Mix veggies","Serve"]},
-    {goal:"lose", name:"Protein Yogurt Bowl", time:"5 mins", calories:200, protein:"15g", carbs:"20g", fats:"4g", meal:"Breakfast", bestTime:"morning", ingredients:["Greek Yogurt 150g","Berries 50g","Honey 5g"], process:["Mix yogurt and berries","Add honey"]},
-    {goal:"lose", name:"Veggie Soup", time:"30 mins", calories:120, protein:"4g", carbs:"20g", fats:"2g", meal:"Dinner", bestTime:"evening", ingredients:["Carrots","Beans","Tomatoes","Spices"], process:["Boil veggies","Add spices","Serve hot"]},
+    /* LOSE - Veg (12 total across veg+nonveg; here we'll put 6 veg + 6 nonveg to reach 12) */
+    {goal:"lose", type:"veg", name:"Poha with Peanuts", meal:"Breakfast", time:"15 mins", calories:260, protein:"6g", carbs:"40g", fats:"9g", bestTime:"morning",
+     ingredients:["Poha 100g","Peanuts 10g","Onion 1 small","Green chilli","Curry leaves","Mustard seeds"], process:["Rinse poha and drain","Temper mustard, add onion & curry leaves","Add peanuts and poha","Mix and cook 2-3 min","Serve with lemon"]},
+    {goal:"lose", type:"veg", name:"Oats Idli", meal:"Breakfast", time:"20 mins", calories:220, protein:"7g", carbs:"35g", fats:"5g", bestTime:"morning",
+     ingredients:["Rolled oats 100g","Curd 100g","Semolina 30g","Eno 1 tsp","Salt"], process:["Grind oats to powder","Mix curd & semolina as batter","Add eno before steaming","Pour into idli moulds & steam 10-12 mins"]},
+    {goal:"lose", type:"veg", name:"Cucumber Raita & Salad", meal:"Snack", time:"10 mins", calories:90, protein:"4g", carbs:"8g", fats:"3g", bestTime:"afternoon",
+     ingredients:["Cucumber 1","Low-fat curd 100g","Chaat masala","Lemon","Mint"], process:["Grate cucumber","Mix with curd and spices","Serve chilled"]},
+    {goal:"lose", type:"veg", name:"Moong Dal Chilla", meal:"Breakfast", time:"20 mins", calories:180, protein:"12g", carbs:"20g", fats:"4g", bestTime:"morning",
+     ingredients:["Split yellow moong 100g","Ginger","Green chilli","Salt","Oil for pan"], process:["Soak & grind moong to batter","Add spices","Cook like pancake till golden"]},
+    {goal:"lose", type:"veg", name:"Mixed Vegetable Soup", meal:"Dinner", time:"25 mins", calories:130, protein:"5g", carbs:"18g", fats:"3g", bestTime:"evening",
+     ingredients:["Carrot","Beans","Tomato","Onion","Vegetable stock"], process:["Chop veggies and boil till soft","Blend slightly or keep chunky","Season & serve hot"]},
+    {goal:"lose", type:"veg", name:"Sprouted Moong Salad", meal:"Snack", time:"10 mins", calories:140, protein:"10g", carbs:"18g", fats:"2g", bestTime:"afternoon",
+     ingredients:["Sprouted moong 100g","Tomato","Onion","Lemon","Coriander"], process:["Mix all ingredients, squeeze lemon, season and serve"]},
 
-    // --- Maintain Weight 8 recipes ---
-    {goal:"maintain", name:"Salmon & Quinoa", time:"25 mins", calories:400, protein:"35g", carbs:"30g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Salmon 150g","Quinoa 50g","Veggies"], process:["Cook quinoa","Grill salmon","Mix with veggies"]},
-    {goal:"maintain", name:"Chicken Wrap", time:"15 mins", calories:350, protein:"25g", carbs:"35g", fats:"10g", meal:"Lunch", bestTime:"afternoon", ingredients:["Tortilla","Chicken 100g","Veggies"], process:["Cook chicken","Assemble wrap with veggies","Serve"]},
-    {goal:"maintain", name:"Avocado Toast", time:"10 mins", calories:250, protein:"6g", carbs:"30g", fats:"12g", meal:"Breakfast", bestTime:"morning", ingredients:["Bread 2 slices","Avocado 1","Salt & Pepper"], process:["Toast bread","Mash avocado","Spread on toast"]},
-    {goal:"maintain", name:"Greek Yogurt Parfait", time:"5 mins", calories:200, protein:"10g", carbs:"25g", fats:"5g", meal:"Snack", bestTime:"morning", ingredients:["Greek Yogurt 150g","Granola 30g","Berries"], process:["Layer yogurt, granola, berries","Serve chilled"]},
-    {goal:"maintain", name:"Veggie Stir Fry", time:"20 mins", calories:300, protein:"10g", carbs:"35g", fats:"12g", meal:"Dinner", bestTime:"evening", ingredients:["Mixed Veggies","Soy Sauce","Olive Oil"], process:["Stir fry veggies with sauce","Serve"]},
-    {goal:"maintain", name:"Turkey Sandwich", time:"10 mins", calories:300, protein:"20g", carbs:"35g", fats:"8g", meal:"Lunch", bestTime:"afternoon", ingredients:["Bread 2 slices","Turkey 100g","Veggies"], process:["Assemble sandwich","Serve"]},
-    {goal:"maintain", name:"Banana Smoothie", time:"5 mins", calories:180, protein:"5g", carbs:"35g", fats:"3g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Milk 150ml","Honey 5g"], process:["Blend all","Serve"]},
-    {goal:"maintain", name:"Egg & Veggie Scramble", time:"15 mins", calories:250, protein:"12g", carbs:"15g", fats:"10g", meal:"Breakfast", bestTime:"morning", ingredients:["Eggs 2","Veggies 50g","Salt & Pepper"], process:["Scramble eggs with veggies","Serve"]},
+    /* LOSE - Non-Veg */
+    {goal:"lose", type:"nonveg", name:"Grilled Tandoori Chicken (Light)", meal:"Dinner", time:"30 mins", calories:260, protein:"32g", carbs:"4g", fats:"10g", bestTime:"evening",
+     ingredients:["Chicken breast 150g","Curd 2 tbsp","Tandoori masala","Lemon","Ginger-garlic paste"], process:["Marinate chicken 30 mins","Grill until cooked","Serve with salad"]},
+    {goal:"lose", type:"nonveg", name:"Fish Moilee (Light Coconut)", meal:"Lunch", time:"25 mins", calories:280, protein:"28g", carbs:"6g", fats:"12g", bestTime:"afternoon",
+     ingredients:["Fish fillet 150g","Coconut milk 50ml","Turmeric","Curry leaves","Onion"], process:["Sear fish lightly","Prepare light coconut gravy","Simmer fish 6-8 mins"]},
+    {goal:"lose", type:"nonveg", name:"Chicken & Quinoa Soup", meal:"Lunch", time:"25 mins", calories:240, protein:"28g", carbs:"20g", fats:"6g", bestTime:"afternoon",
+     ingredients:["Shredded chicken 100g","Quinoa 40g","Veggies","Chicken stock"], process:["Cook quinoa in stock with veggies","Add shredded chicken and simmer"]},
+    {goal:"lose", type:"nonveg", name:"Egg White Bhurji", meal:"Breakfast", time:"12 mins", calories:140, protein:"20g", carbs:"6g", fats:"3g", bestTime:"morning",
+     ingredients:["Egg whites 4","Onion","Tomato","Turmeric","Salt"], process:["Cook onion and tomato","Add egg whites and scramble","Season and serve"]},
+    {goal:"lose", type:"nonveg", name:"Prawn & Veg Stir Fry", meal:"Dinner", time:"18 mins", calories:200, protein:"25g", carbs:"8g", fats:"6g", bestTime:"evening",
+     ingredients:["Prawns 120g","Bell pepper","Broccoli","Soy sauce"], process:["Stir fry veggies","Add prawns and sauce, cook till done"]},
+    {goal:"lose", type:"nonveg", name:"Tandoori Fish Salad", meal:"Lunch", time:"20 mins", calories:210, protein:"26g", carbs:"8g", fats:"7g", bestTime:"afternoon",
+     ingredients:["Fish 120g","Lettuce","Tomatoes","Tandoori spices"], process:["Grill fish","Assemble on salad bed","Dress lightly"]},
 
-    // --- Gain Muscle 8 recipes ---
-    {goal:"gain", name:"Chicken Quinoa Bowl", time:"30 mins", calories:550, protein:"45g", carbs:"50g", fats:"15g", meal:"Lunch", bestTime:"afternoon", ingredients:["Chicken 150g","Quinoa 50g","Veggies"], process:["Cook quinoa","Grill chicken","Mix veggies"]},
-    {goal:"gain", name:"Peanut Butter Banana Smoothie", time:"5 mins", calories:300, protein:"12g", carbs:"35g", fats:"12g", meal:"Snack", bestTime:"morning", ingredients:["Banana 1","Peanut Butter 2tbsp","Milk 150ml"], process:["Blend all ingredients","Serve chilled"]},
-    {goal:"gain", name:"Salmon Rice Bowl", time:"25 mins", calories:600, protein:"40g", carbs:"55g", fats:"18g", meal:"Dinner", bestTime:"evening", ingredients:["Salmon 150g","Rice 50g","Veggies"], process:["Cook rice","Grill salmon","Mix veggies"]},
-    {goal:"gain", name:"Egg Omelette", time:"10 mins", calories:300, protein:"20g", carbs:"5g", fats:"18g", meal:"Breakfast", bestTime:"morning", ingredients:["Eggs 3","Veggies 30g","Cheese 20g"], process:["Whisk eggs","Cook with veggies & cheese"]},
-    {goal:"gain", name:"Protein Pancakes", time:"15 mins", calories:350, protein:"20g", carbs:"40g", fats:"10g", meal:"Breakfast", bestTime:"morning", ingredients:["Oats 50g","Protein Powder 20g","Milk 100ml"], process:["Mix ingredients","Cook pancakes","Serve"]},
-    {goal:"gain", name:"Beef Stir Fry", time:"20 mins", calories:500, protein:"45g", carbs:"35g", fats:"18g", meal:"Dinner", bestTime:"evening", ingredients:["Beef 150g","Veggies 100g","Soy Sauce"], process:["Stir fry beef and veggies","Serve"]},
-    {goal:"gain", name:"Tuna Sandwich", time:"10 mins", calories:350, protein:"25g", carbs:"35g", fats:"10g", meal:"Lunch", bestTime:"afternoon", ingredients:["Bread 2 slices","Tuna 100g","Veggies"], process:["Assemble sandwich","Serve"]},
-    {goal:"gain", name:"Greek Yogurt with Nuts", time:"5 mins", calories:250, protein:"15g", carbs:"20g", fats:"12g", meal:"Snack", bestTime:"morning", ingredients:["Greek Yogurt 150g","Mixed Nuts 20g"], process:["Mix yogurt and nuts","Serve"]}
+    /* MAINTAIN - Veg */
+    {goal:"maintain", type:"veg", name:"Paneer Tikka Bowl", meal:"Lunch", time:"25 mins", calories:420, protein:"22g", carbs:"18g", fats:"24g", bestTime:"afternoon",
+     ingredients:["Paneer 120g","Capsicum","Onion","Tikka masala","Yogurt"], process:["Marinate paneer & veg","Grill and assemble bowl with greens"]},
+    {goal:"maintain", type:"veg", name:"Masala Oats", meal:"Breakfast", time:"10 mins", calories:300, protein:"10g", carbs:"45g", fats:"6g", bestTime:"morning",
+     ingredients:["Rolled oats 60g","Vegetable mix","Spices"], process:["Cook oats with veggies and spices","Serve hot"]},
+    {goal:"maintain", type:"veg", name:"Chole with Brown Rice", meal:"Lunch", time:"40 mins", calories:480, protein:"18g", carbs:"65g", fats:"12g", bestTime:"afternoon",
+     ingredients:["Chickpeas 100g","Spices","Brown rice 80g"], process:["Cook chickpea masala","Serve with steamed brown rice"]},
+    {goal:"maintain", type:"veg", name:"Palak Dal & Roti", meal:"Dinner", time:"30 mins", calories:380, protein:"14g", carbs:"45g", fats:"10g", bestTime:"evening",
+     ingredients:["Yellow dal","Spinach","Onion","Spices"], process:["Cook dal","Add sautéed spinach and tempering","Serve with roti"]},
+    {goal:"maintain", type:"veg", name:"Idli-Sambar", meal:"Breakfast", time:"30 mins", calories:360, protein:"12g", carbs:"60g", fats:"6g", bestTime:"morning",
+     ingredients:["Idli batter","Toor dal","Mixed veggies","Tamarind"], process:["Steam idlis","Prepare sambar","Serve together"]},
+    {goal:"maintain", type:"veg", name:"Vegetable Biryani (Light)", meal:"Dinner", time:"50 mins", calories:520, protein:"14g", carbs:"80g", fats:"14g", bestTime:"evening",
+     ingredients:["Basmati rice 90g","Mixed veggies","Spices"], process:["Cook rice & veggies with spices","Layer & dum for 15 mins"]},
+
+    /* MAINTAIN - NonVeg */
+    {goal:"maintain", type:"nonveg", name:"Butter Chicken (Light)", meal:"Dinner", time:"45 mins", calories:600, protein:"30g", carbs:"40g", fats:"28g", bestTime:"evening",
+     ingredients:["Chicken 150g","Tomato gravy","Light cream"], process:["Cook masala gravy","Add cooked chicken","Simmer with light cream"]},
+    {goal:"maintain", type:"nonveg", name:"Fish Curry with Rice", meal:"Lunch", time:"30 mins", calories:520, protein:"36g", carbs:"60g", fats:"14g", bestTime:"afternoon",
+     ingredients:["Fish pieces","Curry masala","Rice 90g"], process:["Cook curry","Serve with steamed rice"]},
+    {goal:"maintain", type:"nonveg", name:"Egg Curry & Roti", meal:"Dinner", time:"25 mins", calories:420, protein:"20g", carbs:"40g", fats:"16g", bestTime:"evening",
+     ingredients:["Boiled eggs 2","Tomato-onion gravy","Roti"], process:["Prepare gravy","Add eggs and simmer","Serve with roti"]},
+    {goal:"maintain", type:"nonveg", name:"Chicken Pulao", meal:"Lunch", time:"35 mins", calories:540, protein:"34g", carbs:"70g", fats:"12g", bestTime:"afternoon",
+     ingredients:["Basmati rice 90g","Chicken 120g","Spices"], process:["Cook chicken & rice together with spices"]},
+    {goal:"maintain", type:"nonveg", name:"Keema Pav", meal:"Snack", time:"20 mins", calories:380, protein:"28g", carbs:"36g", fats:"14g", bestTime:"evening",
+     ingredients:["Minced meat 120g","Spices","Pav bread"], process:["Cook keema masala","Serve with pav"]},
+    {goal:"maintain", type:"nonveg", name:"Tandoori Prawns with Quinoa", meal:"Dinner", time:"25 mins", calories:430, protein:"32g", carbs:"40g", fats:"10g", bestTime:"evening",
+     ingredients:["Prawns 150g","Tandoori spices","Quinoa 50g"], process:["Marinate prawns","Grill and serve with quinoa"]},
+
+    /* GAIN - Veg */
+    {goal:"gain", type:"veg", name:"Paneer Butter Masala & Rice", meal:"Dinner", time:"35 mins", calories:650, protein:"28g", carbs:"70g", fats:"28g", bestTime:"evening",
+     ingredients:["Paneer 150g","Tomato-onion gravy","Butter"], process:["Prepare rich gravy","Add paneer & simmer","Serve with rice"]},
+    {goal:"gain", type:"veg", name:"Chickpea Peanut Salad", meal:"Snack", time:"10 mins", calories:420, protein:"20g", carbs:"36g", fats:"20g", bestTime:"afternoon",
+     ingredients:["Chickpeas 100g","Peanut 30g","Veggies"], process:["Mix all ingredients & dress with lemon"]},
+    {goal:"gain", type:"veg", name:"Protein Dosa (Urad + Oats)", meal:"Breakfast", time:"20 mins", calories:440, protein:"22g", carbs:"48g", fats:"10g", bestTime:"morning",
+     ingredients:["Urad dal","Oats","Fenugreek","Salt"], process:["Prepare batter","Make dosa on pan and serve with chutney"]},
+    {goal:"gain", type:"veg", name:"Rajma & Brown Rice", meal:"Lunch", time:"50 mins", calories:600, protein:"20g", carbs:"90g", fats:"10g", bestTime:"afternoon",
+     ingredients:["Rajma 120g","Brown rice 100g","Spices"], process:["Cook rajma masala","Serve with brown rice"]},
+    {goal:"gain", type:"veg", name:"Paneer Paratha", meal:"Breakfast", time:"25 mins", calories:520, protein:"24g", carbs:"55g", fats:"22g", bestTime:"morning",
+     ingredients:["Whole wheat flour","Paneer stuffing","Spices"], process:["Prepare dough","Stuff and roll parathas","Cook on tawa with ghee"]},
+    {goal:"gain", type:"veg", name:"Masala Peanut Rice", meal:"Lunch", time:"20 mins", calories:480, protein:"18g", carbs:"60g", fats:"20g", bestTime:"afternoon",
+     ingredients:["Cooked rice","Roasted peanuts","Spices","Coriander"], process:["Toss rice with peanuts & spices, serve hot"]},
+
+    /* GAIN - NonVeg */
+    {goal:"gain", type:"nonveg", name:"Chicken Korma with Rice", meal:"Dinner", time:"45 mins", calories:720, protein:"48g", carbs:"70g", fats:"30g", bestTime:"evening",
+     ingredients:["Chicken 200g","Korma gravy","Rice 100g"], process:["Cook korma","Add chicken","Serve with rice"]},
+    {goal:"gain", type:"nonveg", name:"Egg Fried Rice (Protein Rich)", meal:"Lunch", time:"20 mins", calories:620, protein:"28g", carbs:"80g", fats:"18g", bestTime:"afternoon",
+     ingredients:["Rice 120g","Eggs 3","Veggies","Soy sauce"], process:["Stir fry veggies & eggs","Add rice and sauce","Toss and serve"]},
+    {goal:"gain", type:"nonveg", name:"Mutton Curry with Roti", meal:"Dinner", time:"60 mins", calories:800, protein:"55g", carbs:"50g", fats:"40g", bestTime:"evening",
+     ingredients:["Mutton 200g","Spices","Onion-tomato base"], process:["Cook slow on low heat until tender","Serve with roti or rice"]},
+    {goal:"gain", type:"nonveg", name:"Grilled Chicken with Sweet Potato", meal:"Lunch", time:"35 mins", calories:700, protein:"52g", carbs:"60g", fats:"18g", bestTime:"afternoon",
+     ingredients:["Chicken 200g","Sweet potato 200g","Herbs"], process:["Roast sweet potato","Grill marinated chicken","Serve together"]},
+    {goal:"gain", type:"nonveg", name:"Tuna & Chickpea Power Bowl", meal:"Lunch", time:"15 mins", calories:560, protein:"45g", carbs:"40g", fats:"16g", bestTime:"afternoon",
+     ingredients:["Tuna 120g","Chickpeas 80g","Veggies","Olive oil"], process:["Assemble bowl with tuna, chickpeas & veggies, dress lightly"]},
+    {goal:"gain", type:"nonveg", name:"Keema & Peas Pulao", meal:"Dinner", time:"40 mins", calories:740, protein:"48g", carbs:"80g", fats:"22g", bestTime:"evening",
+     ingredients:["Minced meat 180g","Basmati rice 100g","Peas","Spices"], process:["Cook keema masala","Add rice and cook together"]}
+
 ];
 
+/* Utility: show only selected section */
 function showSection(goal){
-    document.getElementById('loseSection').style.display='none';
-    document.getElementById('maintainSection').style.display='none';
-    document.getElementById('gainSection').style.display='none';
-    if(goal==='lose') document.getElementById('loseSection').style.display='block';
-    else if(goal==='maintain') document.getElementById('maintainSection').style.display='block';
-    else if(goal==='gain') document.getElementById('gainSection').style.display='block';
+    const sections = { lose:'loseSection', maintain:'maintainSection', gain:'gainSection' };
+    Object.values(sections).forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById(sections[goal]).style.display = 'block';
+    // scroll to section
+    setTimeout(()=>document.getElementById(sections[goal]).scrollIntoView({behavior:'smooth'}), 80);
 }
 
-function renderRecipes(){
-    const loseList=document.getElementById("loseList");
-    const maintainList=document.getElementById("maintainList");
-    const gainList=document.getElementById("gainList");
-    loseList.innerHTML=maintainList.innerHTML=gainList.innerHTML="";
-    recipes.forEach(r=>{
-        const card=document.createElement("div");
-        card.className="recipe-card";
-        card.innerHTML=`<h3>${r.name}</h3>
-        <p><strong>Meal:</strong> ${r.meal}</p>
-        <p><strong>Time to Prepare:</strong> ${r.time}</p>
-        <p><strong>Calories:</strong> ${r.calories} kcal</p>
-        <p><strong>Protein:</strong> ${r.protein}</p>
-        <p><strong>Carbs:</strong> ${r.carbs}</p>
-        <p><strong>Fats:</strong> ${r.fats}</p>
-        <span class="badge ${r.bestTime}">Best Time: ${r.bestTime.charAt(0).toUpperCase()+r.bestTime.slice(1)}</span>
-        <br><button class="btn" onclick='openModal(${JSON.stringify(r).replace(/'/g,"\\'")})'>Make It</button>`;
-        if(r.goal==="lose") loseList.appendChild(card);
-        else if(r.goal==="maintain") maintainList.appendChild(card);
-        else if(r.goal==="gain") gainList.appendChild(card);
+/* Render recipes into Veg/Nonveg containers */
+function renderAllRecipes(){
+    const mappings = {
+        lose: { vegContainer: document.getElementById('loseVegList'), nonvegContainer: document.getElementById('loseNonvegList') },
+        maintain: { vegContainer: document.getElementById('maintainVegList'), nonvegContainer: document.getElementById('maintainNonvegList') },
+        gain: { vegContainer: document.getElementById('gainVegList'), nonvegContainer: document.getElementById('gainNonvegList') }
+    };
+    // clear all
+    Object.values(mappings).forEach(m => { m.vegContainer.innerHTML=''; m.nonvegContainer.innerHTML=''; });
+
+    recipes.forEach((r, idx) => {
+        const card = document.createElement('div');
+        card.className = 'recipe-card';
+        const vegBadge = r.type === 'veg' ? `<span class="badge veg">VEG</span>` : `<span class="badge nonveg">NON-VEG</span>`;
+        const timeBadge = `<span class="badge time-badge">${r.bestTime.charAt(0).toUpperCase()+r.bestTime.slice(1)}</span>`;
+        card.innerHTML = `
+            <h4>${r.name}</h4>
+            <div class="meta"><strong>Meal:</strong> ${r.meal} • <strong>Prep:</strong> ${r.time}</div>
+            <div class="meta"><strong>Calories:</strong> ${r.calories} kcal • <strong>Protein:</strong> ${r.protein} • <strong>Carbs:</strong> ${r.carbs} • <strong>Fats:</strong> ${r.fats}</div>
+            <div class="label-row">${vegBadge}${timeBadge}</div>
+            <button class="btn" onclick="openModalIndex(${idx})">Make It</button>
+        `;
+        // append to correct container
+        if(r.goal === 'lose'){
+            if(r.type === 'veg') mappings.lose.vegContainer.appendChild(card);
+            else mappings.lose.nonvegContainer.appendChild(card);
+        } else if(r.goal === 'maintain'){
+            if(r.type === 'veg') mappings.maintain.vegContainer.appendChild(card);
+            else mappings.maintain.nonvegContainer.appendChild(card);
+        } else if(r.goal === 'gain'){
+            if(r.type === 'veg') mappings.gain.vegContainer.appendChild(card);
+            else mappings.gain.nonvegContainer.appendChild(card);
+        }
     });
 }
 
-function openModal(recipe){
-    const modal=document.getElementById("recipeModal");
-    const body=document.getElementById("modalBody");
-    body.innerHTML=`<h2>${recipe.name}</h2>
-    <p><strong>Meal:</strong> ${recipe.meal}</p>
-    <p><strong>Time to Prepare:</strong> ${recipe.time}</p>
-    <p><strong>Calories:</strong> ${recipe.calories} kcal</p>
-    <p><strong>Protein:</strong> ${recipe.protein}</p>
-    <p><strong>Carbs:</strong> ${recipe.carbs}</p>
-    <p><strong>Fats:</strong> ${recipe.fats}</p>
-    <h3>Ingredients:</h3>
-    <ul>${recipe.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
-    <h3>Process:</h3>
-    <ol>${recipe.process.map(p=>`<li>${p}</li>`).join('')}</ol>`;
-    modal.style.display="block";
+/* Modal functions */
+function openModalIndex(idx){
+    const r = recipes[idx];
+    const modal = document.getElementById('recipeModal');
+    document.getElementById('modalTitle').innerText = r.name;
+    document.getElementById('modalSubtitle').innerHTML = `<strong>${r.meal}</strong> • Prep: ${r.time} • <span style="font-weight:700">${r.type.toUpperCase()}</span>`;
+    document.getElementById('modalNutrition').innerHTML = `<div style="color:#444;margin-top:10px"><strong>NUTRITION</strong> — ${r.calories} kcal | Protein: ${r.protein} | Carbs: ${r.carbs} | Fats: ${r.fats}</div>`;
+    document.getElementById('modalIngredients').innerHTML = `<div style="margin-top:12px"><h4>Ingredients</h4><ul class="ingredients">${r.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul></div>`;
+    document.getElementById('modalProcess').innerHTML = `<div style="margin-top:12px"><h4>Process</h4><ol class="process">${r.process.map(s=>`<li>${s}</li>`).join('')}</ol></div>`;
+    modal.classList.add('show');
+    modal.scrollTop = 0;
 }
+function closeModal(){ document.getElementById('recipeModal').classList.remove('show'); }
 
-function closeModal(){
-    document.getElementById("recipeModal").style.display="none";
-}
-
-// Initially hide all but lose section
+/* init */
 showSection('lose');
-renderRecipes();
+renderAllRecipes();
+
 </script>
 </body>
 </html>
