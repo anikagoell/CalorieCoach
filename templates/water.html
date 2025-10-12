@@ -22,6 +22,25 @@
         font-weight: bold;
         letter-spacing: 1px;
         border-bottom: 3px solid #63bfe6;
+        position: relative;
+    }
+
+    /* Home Button */
+    .home-btn {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        background: #63bfe6;
+        color: white;
+        text-decoration: none;
+        padding: 8px 14px;
+        font-size: 16px;
+        border-radius: 8px;
+        transition: background 0.3s ease;
+    }
+
+    .home-btn:hover {
+        background: #45a1c9;
     }
 
     p.intro {
@@ -32,10 +51,10 @@
         color: #555;
     }
 
-    /* Input Section */
     .input-section {
         margin: 20px 0;
     }
+
     .input-section input {
         padding:8px; 
         width:150px; 
@@ -43,6 +62,7 @@
         border-radius:5px;
         border:1px solid #ccc;
     }
+
     .input-section button {
         padding:8px 15px; 
         font-size:16px; 
@@ -53,11 +73,11 @@
         border-radius:5px;
         margin-left:5px;
     }
+
     .input-section button:hover {
         background:#1a7ba0;
     }
 
-    /* Progress Circle */
     .progress-wrapper {
         display: flex;
         justify-content: center;
@@ -84,7 +104,6 @@
         position: absolute;
     }
 
-    /* Graph Placeholder */
     .graph {
         margin: 25px auto;
         width: 85%;
@@ -120,7 +139,6 @@
         width:100%;
     }
 
-    /* Gallery */
     h3 {
         margin-top: 30px;
         font-size: 20px;
@@ -161,7 +179,6 @@
         font-weight: 500;
     }
 
-    /* Modal */
     .modal {
         display: none;
         position: fixed;
@@ -204,19 +221,20 @@
         from {opacity: 0; transform: scale(0.95);}
         to {opacity: 1; transform: scale(1);}
     }
-
 </style>
 </head>
 <body>
 
-<header>💧 Water Intake</header>
+<header>
+    💧 Water Intake
+    <a href="home.html" class="home-btn">🏠 Home</a>
+</header>
 
 <p class="intro">
     Staying hydrated is essential for energy, digestion, and overall well-being.
     Try these refreshing infused water ideas to keep your hydration goals on track!
 </p>
 
-<!-- Input Section -->
 <div class="input-section">
     <input type="number" id="waterInput" placeholder="Add water in ml">
     <button onclick="addWater()">Add</button>
@@ -229,9 +247,7 @@
 </div>
 
 <h2>Today's Hydration</h2>
-<div class="graph">
-     <!-- Bars generated dynamically -->
-</div>
+<div class="graph"></div>
 
 <h2>Infused Water Suggestions</h2>
 <div class="gallery">
@@ -279,7 +295,6 @@
 
 </div>
 
-<!-- Modal -->
 <div class="modal" id="infoModal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -289,21 +304,17 @@
 </div>
 
 <script>
-const dailyGoal = 2000; // daily goal in ml
+const dailyGoal = 2000;
 const progressCircle = document.querySelector(".progress-circle span");
 
-// Load water data from localStorage
 function loadWaterData() {
     let waterData = JSON.parse(localStorage.getItem('waterData') || '{}');
     const today = new Date().toISOString().split('T')[0];
-
     if (!waterData[today]) waterData[today] = 0;
-
     updateProgress(waterData[today]);
     updateGraph(waterData);
 }
 
-// Add water intake
 function addWater() {
     let input = document.getElementById("waterInput");
     let amount = parseInt(input.value);
@@ -311,7 +322,6 @@ function addWater() {
 
     let waterData = JSON.parse(localStorage.getItem('waterData') || '{}');
     const today = new Date().toISOString().split('T')[0];
-
     if (!waterData[today]) waterData[today] = 0;
     waterData[today] += amount;
 
@@ -322,32 +332,27 @@ function addWater() {
     updateGraph(waterData);
 }
 
-// Update progress circle
 function updateProgress(amount) {
     const percentage = Math.min((amount / dailyGoal) * 100, 100);
     progressCircle.textContent = `${Math.round(percentage)}%`;
     document.querySelector(".progress-circle").style.background = `conic-gradient(#2b9ace ${percentage}%, #bfcaae 0)`;
 }
 
-// Update graph
 function updateGraph(data) {
     let graph = document.querySelector(".graph");
     graph.innerHTML = '';
-    let keys = Object.keys(data).slice(-7); // last 7 days
+    let keys = Object.keys(data).slice(-7);
     keys.forEach(day => {
         let bar = document.createElement('div');
         let barHeight = Math.min((data[day]/dailyGoal)*100, 100);
         bar.style.height = barHeight + '%';
-
         let label = document.createElement('span');
         label.textContent = data[day] + 'ml';
         bar.appendChild(label);
-
         graph.appendChild(bar);
     });
 }
 
-// Modal functions
 function openModal(title, content) {
     document.getElementById("modalTitle").innerHTML = title;
     document.getElementById("modalContent").innerHTML = content;
