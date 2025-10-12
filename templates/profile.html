@@ -142,7 +142,7 @@
   <div class="container">
     <div class="profile-header">
   {% if user.profile_pic %}
-    <img src="{{ url_for('static', filename='profile_pics/' ~ user.profile_pic) }}" 
+    <img src="{{ url_for('static', filename= user.profile_pic) }}" 
          alt="Profile Picture" class="profile-pic">
   {% else %}
     <img src="{{ url_for('static', filename='default_user.png') }}" 
