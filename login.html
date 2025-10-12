@@ -12,7 +12,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: url("{{ url_for('static', filename='home.jpg') }}") no-repeat center center/cover;
+            background: url('home.jpg') no-repeat center center/cover;
         }
 
         .login-container {
@@ -86,14 +86,14 @@
         <div class="logo">CalorieCoach</div>
         <div class="tagline">Your Journey Starts Here,<br>Fuel Your Fitness</div>
 
-        <form action="/login" method="POST">
+        <form action="" method="post">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Log In</button>
         </form>
 
         <div class="signup-text">
-            Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a>
+            Don't have an account? <a href="signup.html">Sign Up</a>
         </div>
     </div>
 
