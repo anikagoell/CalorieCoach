@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalorieCoach - Profile</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://i.pinimg.com/736x/91/84/1d/91841d5479c77a8de7ef32fd3384f2d2.jpg') no-repeat center center/cover; }
+
+        .container {
+            max-width: 750px;
+            margin: 50px auto;
+            background: #ffffffee;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-pic {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #4CAF50;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            row-gap: 15px;
+            column-gap: 20px;
+        }
+
+        .profile-info div {
+            padding: 10px 0;
+        }
+
+        .profile-info strong {
+            color: #555;
+        }
+
+        .bio {
+            grid-column: 1 / -1;
+            background: #f1faff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-style: italic;
+            color: #333;
+            margin-top: 15px;
+        }
+
+        .btn-logout {
+            display: block;
+            width: 160px;
+            margin: 40px auto 0 auto;
+            background: linear-gradient(135deg, #ff6b6b, #ff4d4d);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #ff4d4d, #e63939);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        @media(max-width: 600px){
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <img id="profilePic" class="profile-pic" 
+            src='https://via.placeholder.com/140'
+            alt="Profile Picture">
+            <h2> {{ user.name }}</h2>
+        </div>
+
+        <div class="profile-info">
+            <div><strong>Age:</strong> {{ user.age }}</div>
+            <div><strong>Gender:</strong> {{ user.gender }}</div>
+            <div><strong>Email:</strong> {{ user.email }}</div>
+            <div><strong>Height:</strong> {{ user.height }} cm</div>
+            <div><strong>Weight:</strong> {{ user.weight }} kg</div>
+            <div><strong>Activity Level:</strong> {{ user.activity_level }}</div>
+            <div><strong>Goal:</strong> {{ user.health_goal }}</div>
+            <div><strong>Diet Preference:</strong> {{ user.dietary_preference }}</div>
+            <div><strong>Medical Conditions:</strong> {{ user.medical_conditions or 'None' }}</div>
+            <div><strong>Allergies:</strong> {{ user.allergies or 'None' }}</div>
+            <div><strong>Preferred Units:</strong> {{ user.units }}</div>
+            <div class="bio"><strong>Bio:</strong> {{ user.bio or '' }}</div>
+        </div>
+        <a href="{{ url_for('logout') }}">
+            <button class="btn-logout">Logout</button>
+        </a>
+    </div>
+
+    
+</body>
+</html>
