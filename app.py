@@ -100,7 +100,7 @@ def login():
     return render_template('login.html')
 
 
-# -------- New User Profile --------
+# profile setup
 @app.route('/newuser_profile', methods=['GET', 'POST'])
 def newuser_profile():
     if 'user_id' not in session:
@@ -110,7 +110,7 @@ def newuser_profile():
 
     
     if request.method == 'POST':
-        file = request.files.get('profile_pic')  # match input name in form
+        file = request.files.get('profile_pic')  
         if file and file.filename != '':
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -122,7 +122,7 @@ def newuser_profile():
         user.height = request.form.get('height')
         user.weight = request.form.get('weight')
         user.activity_level = request.form.get('activity_level')
-        user.goal = request.form.get('goal')
+        user.health_goal = request.form.get('goal')
         user.dietary_preference = request.form.get('diet_pref')
         user.medical_conditions = request.form.get('medical_conditions')
         user.allergies = request.form.get('allergies')
