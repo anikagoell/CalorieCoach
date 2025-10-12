@@ -12,9 +12,12 @@ class User(db.Model):
     height = db.Column(db.Float)
     activity_level = db.Column(db.String(50))
     health_goal = db.Column(db.String(50))
-    medical_conditions = db.Column(db.String(500))
+    medical_conditions = db.Column(db.String(500), nullable=True)
     dietary_preference = db.Column(db.String(50))
-    allergies = db.Column(db.String(500))
+    allergies = db.Column(db.String(500), nullable=True)
+    profile_pic = db.Column(db.String(200), nullable=True) 
+    units = db.Column(db.String(20))
+    bio = db.Column(db.Text, nullable=True)
 
 class Meal(db.Model):
     id = db.Column(db.Integer, primary_key=True)

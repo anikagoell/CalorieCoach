@@ -32,7 +32,19 @@ def profile():
         return redirect(url_for('login'))
     
     user = User.query.get(session['user_id'])
-    return render_template('profile.html')
+
+    if request.method == 'POST':
+        file = request.files.get('profile_pic')
+        if file and file.filename != '':
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+
+            # save filename in DB
+            user.profile_pic = filename
+            db.session.commit()
+
+    return render_template('profile.html', user=user)
 
 @app.route('/bmi')
 def bmi():

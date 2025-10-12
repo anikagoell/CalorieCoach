@@ -141,11 +141,16 @@
 <body>
   <div class="container">
     <div class="profile-header">
-      <img id="profilePic" class="profile-pic"
-           src="https://via.placeholder.com/140"
-           alt="Profile Picture">
-      <h2>{{ user.name }}</h2>
-    </div>
+  {% if user.profile_pic %}
+    <img src="{{ url_for('static', filename='profile_pics/' ~ user.profile_pic) }}" 
+         alt="Profile Picture" class="profile-pic">
+  {% else %}
+    <img src="{{ url_for('static', filename='default_user.png') }}" 
+         alt="Default Picture" class="profile-pic">
+  {% endif %}
+
+  <h2>{{ user.name }}</h2>
+</div>
 
     <div class="profile-info">
       <div><strong>Age:</strong> {{ user.age }}</div>
@@ -159,11 +164,11 @@
       <div><strong>Medical Conditions:</strong> {{ user.medical_conditions or 'None' }}</div>
       <div><strong>Allergies:</strong> {{ user.allergies or 'None' }}</div>
       <div><strong>Preferred Units:</strong> {{ user.units }}</div>
-      <div class="bio"><strong>Bio:</strong> {{ user.bio or '' }}</div>
+      <div class="bio"><strong>Bio:</strong> {{ user.bio or 'No info provided' }}</div>
     </div>
 
     <div class="button-group">
-      <a href="home.html" class="btn">🏠 Go to Home</a>
+      <a href="{{ url_for('home') }}" class="btn">🏠 Go to Home</a>
       <a href="{{ url_for('logout') }}" class="btn btn-logout">🚪 Logout</a>
     </div>
   </div>
