@@ -27,7 +27,9 @@ class Meal(db.Model):
     protein = db.Column(db.Float)
     carbs = db.Column(db.Float)
     fat = db.Column(db.Float)
+    cluster_id = db.Column(db.Integer)  # 🆕 Add this line
     date = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 
 class Food(db.Model):
