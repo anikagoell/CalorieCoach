@@ -5,9 +5,8 @@ from models import User, Meal , Food
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
 from datetime import datetime, timedelta
-import os
-import re
-from models import Food
+import os, re, joblib, pickle
+import numpy as np
 
 def calculate_nutrition_from_db(meal_text):
     foods = re.split(",|and", meal_text.lower())
@@ -42,6 +41,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Initialize DB
 init_db(app)
+
+model_data_cache = None
 
 # ---------- ROUTES ----------
 
@@ -208,17 +209,28 @@ def log_meal():
         total["protein"] += protein
         total["fat"] += fat
 
-    # ✅ Save combined meal to DB
-    meal_entry = Meal(
-        user_id=session['user_id'],
-        meal_text=str(updated_foods),
-        calories=total["calories"],
-        protein=total["protein"],
-        carbs=total["carbs"],
-        fat=total["fat"]
-    )
-    db.session.add(meal_entry)
+    # Load clustering model
+    with open("suggestion_model.pkl", "rb") as f:
+        scaler, kmeans, df = pickle.load(f)
+
+    # Predict the cluster of the current meal
+    cluster_input = [[total_calories, total_carbs, total_protein, total_fat]]
+    cluster_id = int(kmeans.predict(scaler.transform(cluster_input))[0])
+
+    # Save the meal with its cluster ID
+    meal = Meal(
+        user_id=session["user_id"],
+        meal_text=meal_text,
+        calories=total_calories,
+        protein=total_protein,
+        carbs=total_carbs,
+        fat=total_fat,
+        cluster_id=cluster_id  
+        )
+    
+    db.session.add(meal)
     db.session.commit()
+
 
     return jsonify({"status": "success", "updatedFoods": updated_foods, "totals": total})
 
@@ -251,32 +263,93 @@ def today_meals():
 
     return jsonify({"meals": formatted})
 
-
 @app.route("/suggest_meal", methods=["POST"])
 def suggest_meal():
+    import pickle, numpy as np, random, os
+    from flask import jsonify, request
+    global model_data_cache
+
     data = request.get_json()
     foods = data.get("foods", [])
 
+    # --- Calculate totals ---
     total_cal = sum(f.get("cal", 0) for f in foods)
     total_protein = sum(f.get("protein", 0) for f in foods)
     total_carbs = sum(f.get("carb", 0) for f in foods)
     total_fat = sum(f.get("fat", 0) for f in foods)
 
-    # ===== Simple rule-based logic (later replace with ML model) =====
-    if total_cal < 1200:
-        suggestion = "Your calorie intake is low today. Try adding healthy carbs like roti, oats, banana, or rice."
-    elif total_protein < 50:
-        suggestion = "Protein is low. Consider adding eggs, paneer, dal, sprouts, or chicken."
-    elif total_cal > 2200:
-        suggestion = "You crossed a high calorie limit today. Prefer lighter veggies and avoid sugar/fried items."
-    elif total_fat > 70:
-        suggestion = "Fat intake is high. Avoid fried foods and choose grilled or steamed options."
-    else:
-        suggestion = "Your diet looks well balanced so far. Keep it up! ✅"
+    # --- Identify low nutrients ---
+    low_nutrients = []
+    if total_cal < 1500:
+        low_nutrients.append("calories")
+    if total_protein < 50:
+        low_nutrients.append("protein")
+    if total_carbs < 150:
+        low_nutrients.append("carbs")
+    if total_fat < 40:
+        low_nutrients.append("fat")
+
+    suggestion_text = "⚠️ Unable to generate meal suggestion right now."
+
+    try:
+        # ✅ Load model only once and reuse (cached)
+        if model_data_cache is None:
+            if os.path.exists("suggestion_model.pkl"):
+                with open("suggestion_model.pkl", "rb") as f:
+                    model_data_cache = pickle.load(f)
+                app.logger.info("✅ Suggestion model loaded into cache.")
+            else:
+                app.logger.warning("⚠️ suggestion_model.pkl not found. Using fallback mode.")
+                model_data_cache = None
+
+        if model_data_cache:
+            kmeans = model_data_cache["model"]
+            scaler = model_data_cache["scaler"]
+            df = model_data_cache["df"]
+
+            # --- Predict user’s cluster ---
+            user_features = np.array([[total_cal, total_carbs, total_protein, total_fat]])
+            scaled = scaler.transform(user_features)
+            cluster = kmeans.predict(scaled)[0]
+
+            similar_meals = df[df["Cluster"] == cluster]
+            if "Dish Name" in similar_meals.columns:
+                suggestion = random.choice(similar_meals["Dish Name"].tolist())
+            else:
+                suggestion = random.choice(similar_meals.iloc[:, 0].tolist())
+
+
+
+            # --- Feedback message ---
+            if low_nutrients:
+                feedback = f"Your {', '.join(low_nutrients)} intake seems low."
+            else:
+                feedback = "Your overall intake looks balanced. ✅"
+
+            suggestion_text = f"{feedback} Try adding **{suggestion}** 🍽️"
+
+        else:
+            # --- Fallback when model not available ---
+            if low_nutrients:
+                fallback_suggestions = {
+                    "calories": "rice, oats, or banana",
+                    "protein": "eggs, paneer, dal, or chicken",
+                    "carbs": "roti, fruits, or rice",
+                    "fat": "nuts, olive oil, or seeds"
+                }
+                feedbacks = [f"{nutrient}: {fallback_suggestions[nutrient]}" for nutrient in low_nutrients]
+                feedback_msg = "; ".join(feedbacks)
+                suggestion_text = f"Your {', '.join(low_nutrients)} intake is low. Try adding: {feedback_msg} 🍴"
+            else:
+                suggestion_text = "Your intake looks balanced. Keep it up! ✅"
+
+    except Exception as e:
+        app.logger.warning(f"⚠️ Suggestion generation error: {e}")
+        suggestion_text = f"⚠️ Unable to generate suggestion due to: {e}"
 
     return jsonify({
         "status": "success",
-        "suggestion": suggestion,
+        "suggestion": suggestion_text,
         "totals": {
             "calories": total_cal,
             "protein": total_protein,
@@ -284,6 +357,7 @@ def suggest_meal():
             "fat": total_fat
         }
     })
+
 
 
 # -------- Logout --------
