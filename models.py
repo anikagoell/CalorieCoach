@@ -21,11 +21,21 @@ class User(db.Model):
 
 class Meal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    meal_type = db.Column(db.String(50))
-    food_items = db.Column(db.String(1000))  # JSON string
-    calories = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    meal_text = db.Column(db.Text)
+    calories = db.Column(db.Float)
+    protein = db.Column(db.Float)
+    carbs = db.Column(db.Float)
+    fat = db.Column(db.Float)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Food(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    calories = db.Column(db.Float)
     carbs = db.Column(db.Float)
     protein = db.Column(db.Float)
-    fats = db.Column(db.Float)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    fat = db.Column(db.Float)
+
+

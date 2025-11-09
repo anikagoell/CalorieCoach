@@ -1,9 +1,36 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import db, init_db
-from models import User
+from models import User, Meal , Food
 from werkzeug.utils import secure_filename
+from sqlalchemy import func
+from datetime import datetime, timedelta
 import os
+import re
+from models import Food
+
+def calculate_nutrition_from_db(meal_text):
+    foods = re.split(",|and", meal_text.lower())
+    total = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+    unmatched_items = []
+
+    for item in foods:
+        item = item.strip()
+        match = re.match(r"(\d+)\s*(.*)", item)
+        qty, name = (1, item) if not match else (int(match.group(1)), match.group(2).strip())
+
+        food = Food.query.filter(Food.name.ilike(f"%{name}%")).first()
+        if food:
+            total["calories"] += food.calories * qty
+            total["protein"] += food.protein * qty
+            total["carbs"] += food.carbs * qty
+            total["fat"] += food.fat * qty
+        else:
+            unmatched_items.append(name)
+
+    total["unmatched"] = unmatched_items
+    return total
+
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -136,6 +163,127 @@ def newuser_profile():
             return render_template('home.html', user=user)
     
     return render_template('newuser.html', user=user)
+
+@app.route('/log_meal', methods=['POST'])
+def log_meal():
+    if 'user_id' not in session:
+        return jsonify({"status": "error", "message": "Not logged in"}), 401
+
+    data = request.get_json()
+    foods = data.get("foods", [])
+
+    if not foods:
+        return jsonify({"status": "error", "message": "No foods received"}), 400
+
+    updated_foods = []
+    total = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+
+    for item in foods:
+        name = item["name"].lower()
+        qty = float(item["qty"])
+        meal_type = item["meal"]
+
+        food = Food.query.filter(Food.name.ilike(f"%{name}%")).first()
+
+        if food:
+            cal = food.calories * qty
+            carb = food.carbs * qty
+            protein = food.protein * qty
+            fat = food.fat * qty
+        else:
+            cal = carb = protein = fat = 0  # food not found
+
+        updated_foods.append({
+            "name": item["name"],
+            "meal": meal_type,
+            "qty": qty,
+            "cal": cal,
+            "carb": carb,
+            "protein": protein,
+            "fat": fat
+        })
+
+        total["calories"] += cal
+        total["carbs"] += carb
+        total["protein"] += protein
+        total["fat"] += fat
+
+    # ✅ Save combined meal to DB
+    meal_entry = Meal(
+        user_id=session['user_id'],
+        meal_text=str(updated_foods),
+        calories=total["calories"],
+        protein=total["protein"],
+        carbs=total["carbs"],
+        fat=total["fat"]
+    )
+    db.session.add(meal_entry)
+    db.session.commit()
+
+    return jsonify({"status": "success", "updatedFoods": updated_foods, "totals": total})
+
+@app.route("/today_meals")
+def today_meals():
+    if 'user_id' not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    today = datetime.utcnow().date()
+    meals = Meal.query.filter(
+        Meal.user_id == session['user_id'],
+        db.func.date(Meal.date) == today
+    ).all()
+
+    formatted = []
+    for m in meals:
+        try:
+            parsed = eval(m.meal_text) if isinstance(m.meal_text, str) else m.meal_text
+            dish_names = ", ".join([f"{item['name']} (x{item['qty']})" for item in parsed])
+        except Exception:
+            dish_names = m.meal_text  # fallback in case eval fails
+
+        formatted.append({
+            "dish": dish_names,
+            "calories": m.calories,
+            "protein": m.protein,
+            "carbs": m.carbs,
+            "fat": m.fat
+        })
+
+    return jsonify({"meals": formatted})
+
+
+@app.route("/suggest_meal", methods=["POST"])
+def suggest_meal():
+    data = request.get_json()
+    foods = data.get("foods", [])
+
+    total_cal = sum(f.get("cal", 0) for f in foods)
+    total_protein = sum(f.get("protein", 0) for f in foods)
+    total_carbs = sum(f.get("carb", 0) for f in foods)
+    total_fat = sum(f.get("fat", 0) for f in foods)
+
+    # ===== Simple rule-based logic (later replace with ML model) =====
+    if total_cal < 1200:
+        suggestion = "Your calorie intake is low today. Try adding healthy carbs like roti, oats, banana, or rice."
+    elif total_protein < 50:
+        suggestion = "Protein is low. Consider adding eggs, paneer, dal, sprouts, or chicken."
+    elif total_cal > 2200:
+        suggestion = "You crossed a high calorie limit today. Prefer lighter veggies and avoid sugar/fried items."
+    elif total_fat > 70:
+        suggestion = "Fat intake is high. Avoid fried foods and choose grilled or steamed options."
+    else:
+        suggestion = "Your diet looks well balanced so far. Keep it up! ✅"
+
+    return jsonify({
+        "status": "success",
+        "suggestion": suggestion,
+        "totals": {
+            "calories": total_cal,
+            "protein": total_protein,
+            "carbs": total_carbs,
+            "fat": total_fat
+        }
+    })
 
 
 # -------- Logout --------

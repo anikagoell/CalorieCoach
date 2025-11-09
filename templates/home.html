@@ -200,7 +200,6 @@
             <a href="{{ url_for('profile') }}">Profile</a>
             <a href="{{ url_for('bmi') }}">Calculate BMI</a>
             <a href="{{ url_for('water') }}">Water Log</a>
-            <a href="{{ url_for('report') }}">Report</a>
         
 
         </div>
@@ -248,6 +247,46 @@
         </div>
 
         <button class="btn-submit" onclick="predictCalories()">Predict Calories</button>
+
+       <!-- Today's Logged Meals Table -->
+<h2 style="text-align:center; margin-top:40px; color:#004080;">Today's Logged Meals</h2>
+
+<table id="todayMealsTable" style="width:100%; border-collapse:collapse; margin-top:15px; background:white; border-radius:10px; overflow:hidden; box-shadow:0 6px 15px rgba(0,0,0,0.1);">
+    <thead>
+        <tr style="background:#f2f2f2;">
+            <th>Meal (Text)</th>
+            <th>Calories</th>
+            <th>Protein (g)</th>
+            <th>Carbs (g)</th>
+            <th>Fat (g)</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+
+        <!-- ====== AI Meal Suggestion Section ====== -->
+<div id="suggestionBox" style="margin-top: 25px; text-align: center;">
+    <button class="btn-submit" id="suggestBtn" onclick="getSuggestion()">Get Suggestion</button>
+
+    <div id="suggestionResult" style="
+        display:none;
+        margin-top: 15px;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 17px;
+        font-weight: bold;
+    ">
+        🍽️ Suggested Meal Will Appear Here...
+    </div>
+</div>
+
     </div>
 </div>
 
@@ -320,14 +359,90 @@
         document.getElementById('totals').innerText = 
             `Total Calories: ${totalCal.toFixed(2)} kcal | Carbs: ${totalCarb.toFixed(2)} g | Protein: ${totalProtein.toFixed(2)} g | Fat: ${totalFat.toFixed(2)} g`;
     }
+function loadTodayMeals() {
+    fetch("/today_meals")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#todayMealsTable tbody");
+            tbody.innerHTML = "";
+
+            if (!data.meals || data.meals.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5">No meals logged yet today.</td></tr>`;
+                return;
+            }
+
+            data.meals.forEach(m => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${m.dish}</td>
+                        <td>${m.calories.toFixed(2)}</td>
+                        <td>${m.protein.toFixed(2)}</td>
+                        <td>${m.carbs.toFixed(2)}</td>
+                        <td>${m.fat.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error("Error loading today's meals:", err));
+}
 
     function predictCalories() {
-        if(addedFoods.length === 0){
-            alert("Add some foods first!");
-            return;
-        }
-        alert("This will call the ML backend to predict nutrients for each dish!");
+    if (addedFoods.length === 0) {
+        alert("Add some foods first!");
+        return;
     }
+
+    fetch("/log_meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foods: addedFoods })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            addedFoods = data.updatedFoods; // backend returns foods with real nutrition
+            updateTable(); // refresh UI with real values
+            updateTodayMealTable();   
+            alert("✅ Meal logged successfully!");
+        } else {
+            alert("⚠️ Error: " + data.message);
+        }
+    })
+    .catch(err => console.error("Request failed:", err));
+}
+
+function getSuggestion() {
+    document.getElementById("suggestBtn").innerText = "⏳ Getting Suggestion...";
+    
+    fetch("/suggest_meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ foods: addedFoods })   // sends already logged meal list
+    })
+    .then(res => res.json())
+    .then(data => {
+        let box = document.getElementById("suggestionResult");
+        box.style.display = "block";
+
+        if (data.status === "success") {
+            box.innerHTML = `✅ Suggested Meal: <br><br> <strong>${data.suggestion}</strong>`;
+        } else {
+            box.innerHTML = `⚠️ ${data.message}`;
+        }
+
+        document.getElementById("suggestBtn").innerText = "Get Suggestion";
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("suggestionResult").innerHTML = "⚠️ Error contacting server.";
+        document.getElementById("suggestionBtn").innerText = "Get Suggestion";
+    });
+}
+
+window.onload = function() {
+    loadTodayMeals();   
+}
+
 </script>
 </body>
 </html>
